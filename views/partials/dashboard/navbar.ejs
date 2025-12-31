@@ -1,0 +1,72 @@
+<nav class="navbar">
+    <div class="container-fluid">
+      <!-- Left Side: Brand & Mobile Toggle -->
+      <div class="d-flex align-items-center">
+        <!-- Sidebar Toggle (Mobile Only) -->
+        <button class="btn btn-link d-lg-none me-2" id="openSidebar">
+          <i class="bi bi-list fs-4"></i>
+        </button>
+        <!-- Brand/Logo -->
+        <a href="/" class="navbar-brand">
+          <i class="bi bi-grid-3x3-gap-fill"></i>
+          <span><%= title || 'Dashboard' %></span>
+        </a>
+      </div>
+
+      <!-- Right Side Items -->
+      <div class="d-flex align-items-center gap-3">
+        <!-- Notifications -->
+        <button class="btn btn-link position-relative" title="Notifikasi">
+          <i class="bi bi-bell fs-5"></i>
+          <span class="position-absolute top-0 start-100 translate-middle notification-badge">
+            <span class="visually-hidden">Notifikasi baru</span>
+          </span>
+        </button>
+
+        <!-- User Menu -->
+        <div class="dropdown">
+          <button class="btn btn-link p-0 d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none;">
+            <div class="user-avatar-nav">
+              <%= user.username.charAt(0).toUpperCase() %>
+            </div>
+            <span class="d-none d-md-inline text-dark"><%= user.username %></span>
+            <i class="bi bi-chevron-down d-none d-md-inline" style="font-size: 0.8rem;"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+            <li class="dropdown-header">
+              <div class="d-flex flex-column">
+                <span class="fw-bold"><%= user.username %></span>
+                <small class="text-muted"><%= user.email %></small>
+              </div>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li>
+              <a class="dropdown-item" href="/profile">
+                <i class="bi bi-person me-2"></i>Profil Saya
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/dashboard">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/settings">
+                <i class="bi bi-gear me-2"></i>Pengaturan
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li>
+              <a class="dropdown-item text-danger" href="/auth/logout">
+                <i class="bi bi-box-arrow-right me-2"></i>Logout
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>

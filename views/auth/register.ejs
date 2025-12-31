@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+
+  <link href="/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/vendors/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/vendors/aos/aos.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --default-font: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --heading-font: "Montserrat", sans-serif;
+      --background-color: #f9fafb;
+      --default-color: #1f2937;
+      --heading-color: #047857;
+      --accent-color: #047857;
+      --surface-color: #ffffff;
+      --contrast-color: #ffffff;
+    }
+
+    body {
+      background: linear-gradient(180deg, var(--background-color) 0%, color-mix(in srgb, var(--accent-color), transparent 97%) 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      font-family: var(--default-font);
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 50%, color-mix(in srgb, var(--accent-color), transparent 95%) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .auth-container {
+      background: var(--surface-color);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px color-mix(in srgb, var(--default-color), transparent 94%);
+      overflow: hidden;
+      max-width: 480px;
+      width: 100%;
+      border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-header {
+      background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color), black 20%));
+      padding: 40px 30px;
+      text-align: center;
+      color: var(--contrast-color);
+    }
+
+    .auth-header i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .auth-header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0;
+      font-family: var(--heading-font);
+    }
+
+    .auth-body {
+      padding: 40px 35px;
+    }
+
+    .form-floating {
+      margin-bottom: 20px;
+    }
+
+    .form-floating>.form-control {
+      border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+      border-radius: 8px;
+      height: 48px;
+    }
+
+    .form-floating>.form-control:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color), transparent 90%);
+    }
+
+    .form-floating>label i {
+      color: var(--accent-color);
+      margin-right: 6px;
+    }
+
+    .btn-auth {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent-color);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--contrast-color);
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .btn-auth:hover {
+      background: color-mix(in srgb, var(--accent-color), black 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px color-mix(in srgb, var(--accent-color), transparent 70%);
+    }
+
+    .divider {
+      text-align: center;
+      margin: 25px 0;
+      position: relative;
+    }
+
+    .divider::before {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      top: 50%;
+      height: 1px;
+      background: color-mix(in srgb, var(--default-color), transparent 90%);
+    }
+
+    .divider span {
+      background: var(--surface-color);
+      padding: 0 15px;
+      position: relative;
+      color: color-mix(in srgb, var(--default-color), transparent 40%);
+      font-size: 0.9rem;
+    }
+
+    .auth-link {
+      text-align: center;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 92%);
+    }
+
+    .auth-link a {
+      color: var(--accent-color);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .alert {
+      border-radius: 8px;
+      border: none;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+
+    .alert i {
+      margin-right: 10px;
+    }
+
+    .alert-danger {
+      background-color: color-mix(in srgb, #dc3545, transparent 90%);
+      color: #dc3545;
+      border-left: 4px solid #dc3545;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: color-mix(in srgb, var(--default-color), transparent 40%);
+      z-index: 10;
+      transition: color 0.3s;
+    }
+
+    .password-toggle:hover {
+      color: var(--accent-color);
+    }
+
+    .form-floating.password-field {
+      position: relative;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="auth-container" data-aos="fade-up">
+    <div class="auth-header" data-aos="fade-down">
+      <i class="bi bi-person-plus-fill"></i>
+      <h1>Daftar Akun</h1>
+    </div>
+
+    <div class="auth-body">
+      <% if (error) { %>
+      <div class="alert alert-danger" data-aos="fade-in">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <%= error %>
+      </div>
+      <% } %>
+
+      <form action="/auth/register" method="POST">
+        <div class="form-floating" data-aos="fade-right">
+          <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+          <label for="username"><i class="bi bi-person"></i> Username</label>
+        </div>
+
+        <div class="form-floating" data-aos="fade-right" data-aos-delay="100">
+          <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+          <label for="email"><i class="bi bi-envelope"></i> Email</label>
+        </div>
+
+        <div class="form-floating password-field" data-aos="fade-right" data-aos-delay="200">
+          <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+          <label for="password"><i class="bi bi-lock"></i> Password</label>
+          <i class="bi bi-eye password-toggle" id="togglePassword"></i>
+        </div>
+
+        <div class="form-floating password-field" data-aos="fade-right" data-aos-delay="300">
+          <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Konfirmasi Password" required>
+          <label for="confirmPassword"><i class="bi bi-lock-fill"></i> Konfirmasi Password</label>
+          <i class="bi bi-eye password-toggle" id="toggleConfirmPassword"></i>
+        </div>
+
+        <button type="submit" class="btn btn-auth" data-aos="zoom-in">
+          <i class="bi bi-person-check"></i>
+          Daftar
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>atau</span>
+      </div>
+
+      <div class="auth-link">
+        <p class="mb-0">
+          Sudah punya akun?
+          <a href="/auth/login"><i class="bi bi-box-arrow-in-right"></i> Login di sini</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/vendors/aos/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+
+    // Password Toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function() {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.classList.toggle('bi-eye');
+      this.classList.toggle('bi-eye-slash');
+    });
+
+    // Confirm Password Toggle
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+
+    toggleConfirmPassword.addEventListener('click', function() {
+      const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+      confirmPassword.setAttribute('type', type);
+      this.classList.toggle('bi-eye');
+      this.classList.toggle('bi-eye-slash');
+    });
+  </script>
+
+</body>
+
+</html>

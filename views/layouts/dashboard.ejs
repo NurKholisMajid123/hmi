@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title || 'Dashboard' %></title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicon -->
+  <link href="https://bootstrapmade.com/content/demo/Forma/assets/img/favicon.png" rel="icon">
+  <link href="https://bootstrapmade.com/content/demo/Forma/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/vendors/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/vendors/aos/aos.css" rel="stylesheet">
+  <link href="/vendors/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="/vendors/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS -->
+  <link href="/css/main.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+  <% if (typeof user !== 'undefined' && user) { %>
+
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="overlay"></div>
+
+  <!-- Navbar -->
+  <%- include('../partials/dashboard/navbar') %>
+
+  <!-- Sidebar -->
+  <%- include('../partials/dashboard/sidebar') %>
+
+  <!-- Sidebar Toggle Button -->
+  <button class="sidebar-toggle" id="sidebarToggle">
+    <i class="bi bi-chevron-left"></i>
+  </button>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <main>
+      <%- body %>
+    </main>
+  </div>
+
+  <% } else { %>
+  <!-- No Layout for non-authenticated pages -->
+  <%- body %>
+  <% } %>
+
+  <!-- Vendor JS Files -->
+  <script src="/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/vendors/aos/aos.js"></script>
+  <script src="/vendors/glightbox/js/glightbox.min.js"></script>
+  <script src="/vendors/purecounter/purecounter_vanilla.js"></script>
+  <script src="/vendors/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="/vendors/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="/vendors/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Dashboard Scripts -->
+  <script>
+    // Elements
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('overlay');
+    const toggleIcon = sidebarToggle ? sidebarToggle.querySelector('i') : null;
+    const openSidebarBtn = document.getElementById('openSidebar');
+
+    let sidebarOpen = true;
+
+    // Toggle Sidebar (Desktop & Mobile)
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', () => {
+        if (window.innerWidth > 991) {
+          // Desktop behavior
+          sidebarOpen = !sidebarOpen;
+
+          if (sidebarOpen) {
+            sidebar.classList.remove('hide');
+            mainContent.classList.remove('fullwidth');
+            sidebarToggle.classList.remove('sidebar-closed');
+            if (toggleIcon) {
+              toggleIcon.classList.remove('bi-chevron-right');
+              toggleIcon.classList.add('bi-chevron-left');
+            }
+          } else {
+            sidebar.classList.add('hide');
+            mainContent.classList.add('fullwidth');
+            sidebarToggle.classList.add('sidebar-closed');
+            if (toggleIcon) {
+              toggleIcon.classList.remove('bi-chevron-left');
+              toggleIcon.classList.add('bi-chevron-right');
+            }
+          }
+        } else {
+          // Mobile behavior
+          sidebar.classList.toggle('show');
+          overlay.classList.toggle('show');
+        }
+      });
+    }
+
+    // Open Sidebar (Mobile)
+    if (openSidebarBtn) {
+      openSidebarBtn.addEventListener('click', () => {
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+      });
+    }
+
+    // Close Sidebar via Overlay
+    if (overlay) {
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+      });
+    }
+
+    // Set Active Menu
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href === currentPath) {
+        link.classList.add('active');
+      }
+    });
+
+    // Set Active Dropdown Item
+    document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(item => {
+      const href = item.getAttribute('href');
+      if (item.classList.contains('text-danger')) {
+        return;
+      }
+      if (href && href === currentPath) {
+        item.classList.add('active');
+      }
+    });
+
+    // Handle Window Resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth <= 991) {
+        sidebar.classList.remove('hide');
+        mainContent.classList.remove('fullwidth');
+        if (sidebarToggle) {
+          sidebarToggle.classList.remove('sidebar-closed');
+        }
+        overlay.classList.remove('show');
+      }
+    });
+
+    // Initialize AOS
+    if (typeof AOS !== 'undefined') {
+      AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true,
+        mirror: false
+      });
+    }
+  </script>
+
+  <%- script %>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+<aside id="sidebar">
+  <!-- Sidebar Navigation -->
+  <ul class="sidebar-menu">
+    <!-- Menu untuk SEMUA USER -->
+    <li>
+      <a href="/dashboard" class="sidebar-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li>
+      <a href="/profile" class="sidebar-link <%= typeof activePage !== 'undefined' && activePage === 'profile' ? 'active' : '' %>">
+        <i class="bi bi-person"></i>
+        <span>Profile</span>
+      </a>
+    </li>
+    <li>
+      <a href="/settings" class="sidebar-link <%= typeof activePage !== 'undefined' && activePage === 'settings' ? 'active' : '' %>">
+        <i class="bi bi-gear"></i>
+        <span>Settings</span>
+      </a>
+    </li>
+    <li>
+      <a href="/analytics" class="sidebar-link <%= typeof activePage !== 'undefined' && activePage === 'analytics' ? 'active' : '' %>">
+        <i class="bi bi-graph-up"></i>
+        <span>Analytics</span>
+      </a>
+    </li>
+    <li>
+      <a href="/reports" class="sidebar-link <%= typeof activePage !== 'undefined' && activePage === 'reports' ? 'active' : '' %>">
+        <i class="bi bi-file-earmark-text"></i>
+        <span>Reports</span>
+      </a>
+    </li>
+  </ul>
+
+  <!-- User Profile at Bottom -->
+  <div class="user-profile">
+    <div class="d-flex align-items-center gap-3">
+      <div class="user-avatar">
+        <%= user.username.charAt(0).toUpperCase() %>
+      </div>
+      <div class="user-info flex-grow-1">
+        <p class="mb-0 fw-bold"><%= user.username %></p>
+        <small>
+          <span class="badge bg-primary">User</span>
+        </small>
+      </div>
+      <a href="/auth/logout" class="btn btn-sm text-danger" title="Logout">
+        <i class="bi bi-box-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</aside>

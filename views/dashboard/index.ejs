@@ -1,0 +1,411 @@
+<div class="dashboard-container">
+
+  <!-- Welcome Section -->
+  <section class="mb-4">
+    <div class="content-card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-2">Selamat Datang, <%= user.username %>! 👋</h4>
+            <p class="text-muted mb-0">Kelola dan pantau aktivitas Anda di dashboard ini</p>
+          </div>
+          <div class="text-end d-none d-md-block">
+            <small class="text-muted d-block">
+              <i class="bi bi-calendar3 me-1"></i>
+              <span id="current-date"></span>
+            </small>
+            <small class="text-muted">
+              <i class="bi bi-clock me-1"></i>
+              <span id="current-time"></span>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="stat-card">
+      <div class="icon-wrapper" style="background: rgba(4, 120, 87, 0.15);">
+        <i class="bi bi-people-fill" style="color: #047857;"></i>
+      </div>
+      <p>Total Users</p>
+      <h3>1,234</h3>
+      <span class="badge" style="background: rgba(4, 120, 87, 0.15); color: #047857;">
+        <i class="bi bi-arrow-up"></i> 12% dari bulan lalu
+      </span>
+    </div>
+
+    <div class="stat-card">
+      <div class="icon-wrapper" style="background: rgba(16, 185, 129, 0.15);">
+        <i class="bi bi-currency-dollar" style="color: #10b981;"></i>
+      </div>
+      <p>Revenue</p>
+      <h3>$45,678</h3>
+      <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+        <i class="bi bi-arrow-up"></i> 8% dari bulan lalu
+      </span>
+    </div>
+
+    <div class="stat-card">
+      <div class="icon-wrapper" style="background: rgba(245, 158, 11, 0.15);">
+        <i class="bi bi-cart" style="color: #f59e0b;"></i>
+      </div>
+      <p>Orders</p>
+      <h3>789</h3>
+      <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">
+        <i class="bi bi-arrow-down"></i> 3% dari bulan lalu
+      </span>
+    </div>
+
+    <div class="stat-card">
+      <div class="icon-wrapper" style="background: rgba(59, 130, 246, 0.15);">
+        <i class="bi bi-graph-up" style="color: #3b82f6;"></i>
+      </div>
+      <p>Growth</p>
+      <h3>45%</h3>
+      <span class="badge" style="background: rgba(4, 120, 87, 0.15); color: #047857;">
+        <i class="bi bi-arrow-up"></i> 5% dari bulan lalu
+      </span>
+    </div>
+  </section>
+
+  <!-- Charts Section -->
+  <section class="mb-4">
+    <div class="row">
+      <!-- Revenue Chart -->
+      <div class="col-lg-8 mb-3" data-aos="fade-up">
+        <div class="content-card">
+          <div class="card-header">
+            <h5><i class="bi bi-graph-up me-2"></i>Revenue Overview</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="revenueChart" height="80"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Info -->
+      <div class="col-lg-4 mb-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="content-card">
+          <div class="card-header">
+            <h5><i class="bi bi-person-circle me-2"></i>User Info</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3 pb-3" style="border-bottom: 1px solid rgba(4, 120, 87, 0.15);">
+              <label class="text-muted small mb-2 text-uppercase fw-semibold" style="letter-spacing: 0.5px;">Username</label>
+              <p class="mb-0 fw-semibold fs-5" style="color: #1f2937;"><%= user.username %></p>
+            </div>
+            <div class="mb-3 pb-3" style="border-bottom: 1px solid rgba(4, 120, 87, 0.15);">
+              <label class="text-muted small mb-2 text-uppercase fw-semibold" style="letter-spacing: 0.5px;">Email</label>
+              <p class="mb-0 fw-semibold" style="color: #1f2937;"><%= user.email %></p>
+            </div>
+            <div class="mb-3 pb-3" style="border-bottom: 1px solid rgba(4, 120, 87, 0.15);">
+              <label class="text-muted small mb-2 text-uppercase fw-semibold" style="letter-spacing: 0.5px;">User ID</label>
+              <p class="mb-0 fw-semibold" style="color: #1f2937;">#<%= user.id %></p>
+            </div>
+            <div class="mb-0">
+              <label class="text-muted small mb-2 text-uppercase fw-semibold" style="letter-spacing: 0.5px;">Status</label>
+              <p class="mb-0">
+                <span class="badge px-3 py-2" style="background: linear-gradient(135deg, #10b981, #059669); color: white; font-size: 0.9rem;">
+                  <i class="bi bi-check-circle me-1"></i> Active
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Grid -->
+  <div class="content-grid">
+
+    <!-- Main Content - Recent Activity -->
+    <div class="content-card" data-aos="fade-up">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5><i class="bi bi-clock-history me-2"></i>Recent Activity</h5>
+        <a href="#" class="btn btn-sm btn-outline-light">
+          <i class="bi bi-arrow-right"></i> View All
+        </a>
+      </div>
+      <div class="card-body">
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-icon" style="background: rgba(4, 120, 87, 0.15);">
+              <i class="bi bi-box-arrow-in-right" style="color: #047857;"></i>
+            </div>
+            <div class="activity-content">
+              <p class="activity-title">User Login</p>
+              <small class="activity-desc">Successful login from Chrome browser</small>
+              <small class="activity-time">
+                <i class="bi bi-clock me-1"></i>
+                2 hours ago
+              </small>
+            </div>
+            <a href="#" class="btn btn-sm btn-outline-light">
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon" style="background: rgba(59, 130, 246, 0.15);">
+              <i class="bi bi-person-gear" style="color: #3b82f6;"></i>
+            </div>
+            <div class="activity-content">
+              <p class="activity-title">Profile Update</p>
+              <small class="activity-desc">Updated profile information</small>
+              <small class="activity-time">
+                <i class="bi bi-clock me-1"></i>
+                5 hours ago
+              </small>
+            </div>
+            <a href="#" class="btn btn-sm btn-outline-light">
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon" style="background: rgba(245, 158, 11, 0.15);">
+              <i class="bi bi-key" style="color: #f59e0b;"></i>
+            </div>
+            <div class="activity-content">
+              <p class="activity-title">Password Change</p>
+              <small class="activity-desc">Password changed successfully</small>
+              <small class="activity-time">
+                <i class="bi bi-clock me-1"></i>
+                1 day ago
+              </small>
+            </div>
+            <a href="#" class="btn btn-sm btn-outline-light">
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon" style="background: rgba(16, 185, 129, 0.15);">
+              <i class="bi bi-envelope-check" style="color: #10b981;"></i>
+            </div>
+            <div class="activity-content">
+              <p class="activity-title">Email Verification</p>
+              <small class="activity-desc">Email verified successfully</small>
+              <small class="activity-time">
+                <i class="bi bi-clock me-1"></i>
+                2 days ago
+              </small>
+            </div>
+            <a href="#" class="btn btn-sm btn-outline-light">
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon" style="background: rgba(107, 114, 128, 0.15);">
+              <i class="bi bi-gear" style="color: #6b7280;"></i>
+            </div>
+            <div class="activity-content">
+              <p class="activity-title">Settings Updated</p>
+              <small class="activity-desc">Changed notification preferences</small>
+              <small class="activity-time">
+                <i class="bi bi-clock me-1"></i>
+                3 days ago
+              </small>
+            </div>
+            <a href="#" class="btn btn-sm btn-outline-light">
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Right -->
+    <div class="sidebar-right">
+      <!-- System Information -->
+      <div class="content-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="card-header">
+          <h6><i class="bi bi-info-circle-fill me-2"></i>System Information</h6>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <small class="text-muted">
+              <i class="bi bi-hdd me-2"></i>Storage
+            </small>
+            <small class="fw-bold">75% Used</small>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <small class="text-muted">
+              <i class="bi bi-cpu me-2"></i>CPU Usage
+            </small>
+            <small class="fw-bold">42%</small>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <small class="text-muted">
+              <i class="bi bi-memory me-2"></i>Memory
+            </small>
+            <small class="fw-bold">8GB / 16GB</small>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <small class="text-muted">
+              <i class="bi bi-speedometer2 me-2"></i>Performance
+            </small>
+            <small class="fw-bold" style="color: #10b981;">Excellent</small>
+          </div>
+
+          <hr>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              <i class="bi bi-clock me-2"></i>Last Updated
+            </small>
+            <small class="fw-bold" id="last-updated">Just now</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Update Date and Time
+  function updateDateTime() {
+    const now = new Date();
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+    const dateStr = now.toLocaleDateString('id-ID', options);
+    const dateElement = document.getElementById('current-date');
+    if (dateElement) dateElement.textContent = dateStr;
+
+    const timeStr = now.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    const timeElement = document.getElementById('current-time');
+    if (timeElement) timeElement.textContent = timeStr;
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+    // Chart.js script for Revenue Chart
+    const ctx = document.getElementById('revenueChart');
+    if (ctx) {
+      // Load Chart.js from CDN
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+      script.onload = function() {
+        new Chart(ctx.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            datasets: [{
+              label: 'Revenue ($)',
+              data: [12000, 19000, 15000, 25000, 22000, 30000, 28000],
+              borderColor: '#047857',
+              backgroundColor: 'rgba(4, 120, 87, 0.1)',
+              tension: 0.4,
+              fill: true,
+              pointBackgroundColor: '#047857',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              pointHoverBackgroundColor: '#065f46',
+              pointHoverBorderWidth: 3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                  font: {
+                    family: 'Montserrat',
+                    size: 12,
+                    weight: '600'
+                  },
+                  color: '#1f2937',
+                  padding: 15
+                }
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(31, 41, 55, 0.95)',
+                titleColor: '#fff',
+                titleFont: {
+                  family: 'Montserrat',
+                  size: 14,
+                  weight: '600'
+                },
+                bodyFont: {
+                  family: 'Roboto',
+                  size: 13
+                },
+                padding: 12,
+                borderColor: '#047857',
+                borderWidth: 2,
+                callbacks: {
+                  label: function(context) {
+                    return 'Revenue: $' + context.parsed.y.toLocaleString();
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(0, 0, 0, 0.05)'
+                },
+                ticks: {
+                  font: {
+                    family: 'Roboto',
+                    size: 12
+                  },
+                  color: '#6b7280',
+                  callback: function(value) {
+                    return '$' + value.toLocaleString();
+                  }
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                },
+                ticks: {
+                  font: {
+                    family: 'Roboto',
+                    size: 12
+                  },
+                  color: '#6b7280'
+                }
+              }
+            },
+            interaction: {
+              mode: 'nearest',
+              axis: 'x',
+              intersect: false
+            }
+          }
+        });
+      };
+      document.head.appendChild(script);
+    }
+  });
+</script>

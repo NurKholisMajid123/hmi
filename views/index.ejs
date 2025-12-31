@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Himpuan Mahasiswa Islam</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Favicons -->
+  <link href="https://bootstrapmade.com/content/demo/Forma/assets/img/favicon.png" rel="icon">
+  <link href="https://bootstrapmade.com/content/demo/Forma/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/" rel="preconnect">
+  <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/vendors/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/vendors/aos/aos.css" rel="stylesheet">
+  <link href="/vendors/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="/vendors/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="/css/main.css" rel="stylesheet">
+
+</head>
+
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container position-relative d-flex align-items-center justify-content-between">
+      <a href="/" class="logo d-flex align-items-center me-auto me-xl-0">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.webp" alt=""> -->
+        <h1 class="sitename">Hmi</h1><span>.</span>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="#hero" class="active">Beranda</a></li>
+          <li><a href="#about">Tentang</a></li>
+          <li><a href="#services">Program Kerja</a></li>
+          <li><a href="#portfolio">Kegiatan</a></li>
+          <li><a href="#team">Pengurus</a></li>
+          <li class="dropdown"><a href="#"><span>Informasi</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="#">Sejarah HMI</a></li>
+              <li><a href="#">Nilai Dasar Perjuangan</a></li>
+              <li><a href="#">Struktur Organisasi</a></li>
+              <li><a href="#">Berita & Artikel</a></li>
+            </ul>
+          </li>
+          <li><a href="#contact">Kontak</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <!-- Conditional Button: Bergabung atau Dashboard -->
+      <% if (user) { %>
+      <!-- Jika user sudah login -->
+      <div class="user-menu d-flex align-items-center gap-3">
+        <span class="text-white">Halo, <%= user.username %></span>
+        <a class="btn-getstarted" href="/dashboard">Dashboard</a>
+      </div>
+      <% } else { %>
+      <!-- Jika user belum login -->
+      <a class="btn-getstarted" href="/auth/login">Bergabung</a>
+      <% } %>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section">
+
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
+            <div class="hero-content">
+              <div class="hero-badge">
+                <span class="badge">✨ Periode 2024/2025</span>
+              </div>
+              <h1>HMI Komisariat Wahid Hasyim Unira Malang</h1>
+              <p>Organisasi mahasiswa Islam yang berfokus pada pembinaan kader intelektual muslim, penguatan nilai keislaman, serta pengabdian aktif kepada masyarakat untuk mewujudkan umat yang berkualitas.</p>
+              <div class="hero-buttons">
+                <a href="#about" class="btn btn-primary">
+                  <span>Tentang Kami</span>
+                  <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+                <a href="#services" class="btn btn-outline">
+                  <i class="bi bi-clipboard-check me-2"></i>
+                  <span>Program Kerja</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5" data-aos="fade-up" data-aos-delay="200">
+            <div class="hero-visual">
+              <div class="product-mockup">
+                <div class="mockup-frame">
+                  <img src="/img/hero/hero.svg" alt="HMI Activities" class="img-fluid">
+                </div>
+                <div class="floating-card card-1" data-aos="fade-up" data-aos-delay="400">
+                  <div class="card-icon">
+                    <i class="bi bi-people-fill"></i>
+                  </div>
+                  <div class="card-content">
+                    <div class="card-value">500+</div>
+                    <div class="card-label">Anggota Aktif</div>
+                  </div>
+                </div>
+                <div class="floating-card card-2" data-aos="fade-up" data-aos-delay="500">
+                  <div class="card-icon">
+                    <i class="bi bi-award-fill"></i>
+                  </div>
+                  <div class="card-content">
+                    <div class="card-value">15+</div>
+                    <div class="card-label">Komisariat</div>
+                  </div>
+                </div>
+                <div class="floating-card card-3" data-aos="fade-up" data-aos-delay="600">
+                  <div class="card-icon">
+                    <i class="bi bi-calendar-event"></i>
+                  </div>
+                  <div class="card-content">
+                    <div class="card-value">50+</div>
+                    <div class="card-label">Kegiatan/Tahun</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-background">
+        <div class="gradient-blob blob-1"></div>
+        <div class="gradient-blob blob-2"></div>
+        <div class="grid-pattern"></div>
+      </div>
+
+    </section><!-- /Hero Section -->
+
+    <!-- About Section -->
+    <section id="about" class="about section light-background">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="content-wrapper">
+              <div class="section-badge">Tentang Kami</div>
+              <h2>Komisariat Wahid Hasyim</h2>
+              <p class="lead">HMI adalah organisasi kader yang bersifat keislaman dan kemahasiswaan, berasaskan Islam dan bercita-cita terwujudnya masyarakat adil makmur yang diridhai Allah SWT.</p>
+
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <div class="stat-number purecounter" data-purecounter-start="0" data-purecounter-end="500" data-purecounter-duration="1">+</div>
+                  <div class="stat-label">Kader Aktif</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number purecounter" data-purecounter-start="0" data-purecounter-end="15" data-purecounter-duration="1">+</div>
+                  <div class="stat-label">Komisariat</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number purecounter" data-purecounter-start="0" data-purecounter-end="75" data-purecounter-duration="1"></div>
+                  <div class="stat-label">Tahun Berdiri</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number purecounter" data-purecounter-start="0" data-purecounter-end="50" data-purecounter-duration="1">+</div>
+                  <div class="stat-label">Kegiatan/Tahun</div>
+                </div>
+              </div>
+
+              <div class="features-row">
+                <div class="feature-item">
+                  <div class="feature-icon">
+                    <i class="bi bi-book-fill"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h4>Pembinaan Kader</h4>
+                    <p>Membentuk kader yang berilmu, berakhlak mulia, dan siap mengabdi kepada umat.</p>
+                  </div>
+                </div>
+                <div class="feature-item">
+                  <div class="feature-icon">
+                    <i class="bi bi-heart-fill"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h4>Pengabdian Masyarakat</h4>
+                    <p>Aktif melakukan kegiatan sosial dan pemberdayaan masyarakat berbasis nilai Islam.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cta-group">
+                <a href="#contact" class="btn btn-primary">Bergabung Sekarang <i class="bi bi-arrow-right"></i></a>
+                <a href="#services" class="btn btn-secondary">Lihat Program</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="image-stack">
+              <div class="image-card image-primary">
+                <img src="/img/about/about1.svg" alt="Kegiatan HMI" class="img-fluid">
+              </div>
+              <div class="image-card image-secondary">
+                <img src="/img/about/about2.svg" alt="Diskusi HMI" class="img-fluid">
+              </div>
+              <div class="floating-badge">
+                <div class="badge-icon">
+                  <i class="bi bi-star-fill"></i>
+                </div>
+                <div class="badge-text">
+                  <div class="badge-title">Organisasi Terpercaya</div>
+                  <div class="badge-subtitle">Sejak 1947</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /About Section -->
+
+    <!-- Services Section -->
+    <section id="services" class="services section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Program Kerja</h2>
+        <div><span>Program</span> <span class="description-title">Unggulan Kami</span></div>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="section-intro">
+          <div class="row align-items-center">
+            <div class="col-lg-7">
+              <h2 class="intro-title">Program Pembinaan & Pengembangan Kader</h2>
+              <p class="intro-text">Kami menyelenggarakan berbagai program untuk membentuk kader yang berkualitas, berintegritas, dan siap berkontribusi untuk kemajuan umat dan bangsa.</p>
+            </div>
+            <div class="col-lg-5 text-lg-end">
+              <a href="#contact" class="btn-view-all">Hubungi Kami <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row gy-4">
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="150">
+            <div class="service-item">
+              <div class="service-header">
+                <div class="icon-wrapper">
+                  <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <span class="badge-popular">Prioritas</span>
+              </div>
+              <h3>Latihan Kader (LK)</h3>
+              <p>Program pelatihan intensif untuk membentuk karakter dan kompetensi kader HMI dalam memahami nilai dasar perjuangan Islam.</p>
+              <ul class="feature-list">
+                <li><i class="bi bi-check-circle"></i> LK I - Dasar</li>
+                <li><i class="bi bi-check-circle"></i> LK II - Menengah</li>
+                <li><i class="bi bi-check-circle"></i> LK III - Lanjutan</li>
+              </ul>
+              <a href="#contact" class="service-cta">
+                <span>Selengkapnya</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-header">
+                <div class="icon-wrapper">
+                  <i class="bi bi-book-half"></i>
+                </div>
+              </div>
+              <h3>Kajian Keislaman</h3>
+              <p>Diskusi dan pembelajaran mendalam tentang Islam, Al-Quran, Hadits, dan pemikiran Islam kontemporer.</p>
+              <ul class="feature-list">
+                <li><i class="bi bi-check-circle"></i> Kajian Rutin Mingguan</li>
+                <li><i class="bi bi-check-circle"></i> Seminar Keislaman</li>
+                <li><i class="bi bi-check-circle"></i> Diskusi Tematik</li>
+              </ul>
+              <a href="#contact" class="service-cta">
+                <span>Selengkapnya</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-header">
+                <div class="icon-wrapper">
+                  <i class="bi bi-people-fill"></i>
+                </div>
+              </div>
+              <h3>Pengabdian Masyarakat</h3>
+              <p>Program nyata untuk membantu dan memberdayakan masyarakat melalui kegiatan sosial berbasis nilai Islam.</p>
+              <ul class="feature-list">
+                <li><i class="bi bi-check-circle"></i> Bakti Sosial</li>
+                <li><i class="bi bi-check-circle"></i> Pengajaran Gratis</li>
+                <li><i class="bi bi-check-circle"></i> Pemberdayaan Ekonomi</li>
+              </ul>
+              <a href="#contact" class="service-cta">
+                <span>Selengkapnya</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="150">
+            <div class="service-item">
+              <div class="service-header">
+                <div class="icon-wrapper">
+                  <i class="bi bi-chat-square-text-fill"></i>
+                </div>
+              </div>
+              <h3>Diskusi & Bedah Buku</h3>
+              <p>Forum diskusi intelektual untuk membahas isu-isu aktual dan memperluas wawasan kader.</p>
+              <ul class="feature-list">
+                <li><i class="bi bi-check-circle"></i> Bedah Buku Berkala</li>
+                <li><i class="bi bi-check-circle"></i> Diskusi Panel</li>
+                <li><i class="bi bi-check-circle"></i> Kajian Pemikiran Islam</li>
+              </ul>
+              <a href="#contact" class="service-cta">
+                <span>Selengkapnya</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-header">
+                <div class="icon-wrapper">
+                  <i class="bi bi-trophy-fill"></i>
+                </div>
+              </div>
+              <h3>Pengembangan Soft Skills</h3>
+              <p>Pelatihan untuk meningkatkan kemampuan kepemimpinan, komunikasi, dan keterampilan organisasi.</p>
+              <ul class="feature-list">
+                <li><i class="bi bi-check-circle"></i> Leadership Training</li>
+                <li><i class="bi bi-check-circle"></i> Public Speaking</li>
+                <li><i class="bi bi-check-circle"></i> Manajemen Organisasi</li>
+              </ul>
+              <a href="#contact" class="service-cta">
+                <span>Selengkapnya</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-header">
+                <div class="icon-wrapper">
+                  <i class="bi bi-calendar-event-fill"></i>
+                </div>
+              </div>
+              <h3>Peringatan Hari Besar Islam</h3>
+              <p>Kegiatan memperingati hari-hari besar Islam dengan berbagai rangkaian acara edukatif dan spiritual.</p>
+              <ul class="feature-list">
+                <li><i class="bi bi-check-circle"></i> Maulid Nabi Muhammad SAW</li>
+                <li><i class="bi bi-check-circle"></i> Isra Mi'raj</li>
+                <li><i class="bi bi-check-circle"></i> Ramadhan & Idul Fitri</li>
+              </ul>
+              <a href="#contact" class="service-cta">
+                <span>Selengkapnya</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="cta-banner" data-aos="fade-up" data-aos-delay="300">
+          <div class="row align-items-center">
+            <div class="col-lg-8">
+              <div class="cta-content">
+                <div class="cta-badge">Mari Bergabung!</div>
+                <h3>Jadilah Bagian dari Perubahan</h3>
+                <p>Bergabunglah dengan HMI untuk mengembangkan potensi diri, memperkuat iman, dan berkontribusi nyata untuk kemajuan umat dan bangsa.</p>
+              </div>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+              <a href="#contact" class="btn-primary">Daftar Sekarang <i class="bi bi-arrow-right"></i></a>
+              <a href="#about" class="btn-secondary">Pelajari Lebih Lanjut</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Services Section -->
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Kegiatan</h2>
+        <div><span>Dokumentasi</span> <span class="description-title">Kegiatan Kami</span></div>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
+          <ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="200">
+            <li data-filter="*" class="filter-active">Semua</li>
+            <li data-filter=".filter-lk">Latihan Kader</li>
+            <li data-filter=".filter-kajian">Kajian</li>
+            <li data-filter=".filter-sosial">Sosial</li>
+            <li data-filter=".filter-event">Event</li>
+          </ul>
+
+          <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="300">
+            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-lk">
+              <div class="portfolio-card">
+                <div class="card-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-1.webp" alt="Latihan Kader" class="img-fluid" loading="lazy">
+                  <div class="overlay">
+                    <a href="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-1.webp" class="glightbox icon-btn">
+                      <i class="bi bi-arrows-fullscreen"></i>
+                    </a>
+                  </div>
+                  <div class="tag">Featured</div>
+                </div>
+                <div class="card-content">
+                  <div class="meta">
+                    <span class="category">Latihan Kader</span>
+                    <span class="year">2024</span>
+                  </div>
+                  <h3>LK I HMI Cabang Malang</h3>
+                  <p>Pelatihan dasar untuk kader baru dalam memahami nilai-nilai perjuangan HMI.</p>
+                  <div class="tech-stack">
+                    <span>150 Peserta</span>
+                    <span>3 Hari</span>
+                    <span>Malang</span>
+                  </div>
+                  <a href="#" class="view-project">Lihat Detail <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-kajian">
+              <div class="portfolio-card">
+                <div class="card-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-3.webp" alt="Kajian Keislaman" class="img-fluid" loading="lazy">
+                  <div class="overlay">
+                    <a href="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-3.webp" class="glightbox icon-btn">
+                      <i class="bi bi-arrows-fullscreen"></i>
+                    </a>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <div class="meta">
+                    <span class="category">Kajian</span>
+                    <span class="year">2024</span>
+                  </div>
+                  <h3>Seminar Nasional Keislaman</h3>
+                  <p>Diskusi mendalam tentang peran pemuda muslim dalam pembangunan bangsa.</p>
+                  <div class="tech-stack">
+                    <span>300 Peserta</span>
+                    <span>Hybrid</span>
+                    <span>Narasumber Ahli</span>
+                  </div>
+                  <a href="#" class="view-project">Lihat Detail <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-sosial">
+              <div class="portfolio-card">
+                <div class="card-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-4.webp" alt="Pengajaran Gratis" class="img-fluid" loading="lazy">
+                  <div class="overlay">
+                    <a href="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-4.webp" class="glightbox icon-btn">
+                      <i class="bi bi-arrows-fullscreen"></i>
+                    </a>
+                  </div>
+                  <div class="tag">Featured</div>
+                </div>
+                <div class="card-content">
+                  <div class="meta">
+                    <span class="category">Sosial</span>
+                    <span class="year">2024</span>
+                  </div>
+                  <h3>Bimbingan Belajar Gratis</h3>
+                  <p>Program pengajaran gratis untuk anak-anak kurang mampu di sekitar kampus.</p>
+                  <div class="tech-stack">
+                    <span>100 Siswa</span>
+                    <span>Gratis</span>
+                    <span>Rutin</span>
+                  </div>
+                  <a href="#" class="view-project">Lihat Detail <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-lk">
+              <div class="portfolio-card">
+                <div class="card-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-8.webp" alt="LK II" class="img-fluid" loading="lazy">
+                  <div class="overlay">
+                    <a href="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-8.webp" class="glightbox icon-btn">
+                      <i class="bi bi-arrows-fullscreen"></i>
+                    </a>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <div class="meta">
+                    <span class="category">Latihan Kader</span>
+                    <span class="year">2024</span>
+                  </div>
+                  <h3>LK II Tingkat Cabang</h3>
+                  <p>Pelatihan menengah untuk pendalaman materi keorganisasian dan keislaman.</p>
+                  <div class="tech-stack">
+                    <span>80 Peserta</span>
+                    <span>5 Hari</span>
+                    <span>Intensif</span>
+                  </div>
+                  <a href="#" class="view-project">Lihat Detail <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-event">
+              <div class="portfolio-card">
+                <div class="card-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-6.webp" alt="Muktamar" class="img-fluid" loading="lazy">
+                  <div class="overlay">
+                    <a href="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-6.webp" class="glightbox icon-btn">
+                      <i class="bi bi-arrows-fullscreen"></i>
+                    </a>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <div class="meta">
+                    <span class="category">Event</span>
+                    <span class="year">2024</span>
+                  </div>
+                  <h3>Konferensi Cabang HMI Malang</h3>
+                  <p>Musyawarah tertinggi di tingkat cabang untuk membahas arah organisasi.</p>
+                  <div class="tech-stack">
+                    <span>200 Delegasi</span>
+                    <span>3 Hari</span>
+                    <span>Demokratis</span>
+                  </div>
+                  <a href="#" class="view-project">Lihat Detail <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-event">
+              <div class="portfolio-card">
+                <div class="card-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-9.webp" alt="Maulid Nabi" class="img-fluid" loading="lazy">
+                  <div class="overlay">
+                    <a href="https://bootstrapmade.com/content/demo/Forma/assets/img/portfolio/portfolio-9.webp" class="glightbox icon-btn">
+                      <i class="bi bi-arrows-fullscreen"></i>
+                    </a>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <div class="meta">
+                    <span class="category">Event</span>
+                    <span class="year">2023</span>
+                  </div>
+                  <h3>Peringatan Maulid Nabi Muhammad SAW</h3>
+                  <p>Kegiatan memperingati kelahiran Nabi dengan ceramah dan shalawat bersama.</p>
+                  <div class="tech-stack">
+                    <span>Ceramah</span>
+                    <span>Shalawat</span>
+                    <span>Doa Bersama</span>
+                  </div>
+                  <a href="#" class="view-project">Lihat Detail <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="cta-box" data-aos="fade-up" data-aos-delay="400">
+          <div class="row align-items-center">
+            <div class="col-lg-8">
+              <h3>Ingin Berpartisipasi dalam Kegiatan Kami?</h3>
+              <p>Bergabunglah dengan HMI dan jadilah bagian dari berbagai kegiatan positif untuk pengembangan diri dan pengabdian kepada umat.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+              <a href="#contact" class="btn-primary">Hubungi Kami</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Portfolio Section -->
+
+    <!-- Why Us Section -->
+    <section id="why-us" class="why-us section light-background">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Mengapa HMI</h2>
+        <div><span>Mengapa</span> <span class="description-title">Bergabung dengan HMI</span></div>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row align-items-center mb-5">
+          <div class="col-lg-6" data-aos="fade-right" data-aos-delay="200">
+            <div class="intro-content">
+              <span class="badge">Keunggulan HMI</span>
+              <h2>Organisasi Mahasiswa Islam Terpercaya</h2>
+              <p class="lead">HMI telah berpengalaman lebih dari 77 tahun dalam membina kader-kader muslim yang berkualitas, berintegritas, dan siap berkontribusi untuk kemajuan bangsa.</p>
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <div class="stat-number" data-purecounter-start="0" data-purecounter-end="77" data-purecounter-duration="2">77</div>
+                  <div class="stat-label">Tahun Pengabdian</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number" data-purecounter-start="0" data-purecounter-end="100" data-purecounter-duration="2">100</div>
+                  <div class="stat-label">+ Cabang se-Indonesia</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number" data-purecounter-start="0" data-purecounter-end="50" data-purecounter-duration="2">50</div>
+                  <div class="stat-label">K+ Alumni Sukses</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6" data-aos="fade-left" data-aos-delay="300">
+            <div class="showcase-image">
+              <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/illustration/illustration-18.webp" alt="HMI Activities" class="img-fluid">
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+          <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+            <div class="value-card">
+              <div class="icon-box">
+                <i class="bi bi-book-fill"></i>
+              </div>
+              <h4>Pembinaan Berkualitas</h4>
+              <p>Program pembinaan kader yang sistematis dan terarah untuk menghasilkan pemimpin Muslim yang berintegritas.</p>
+              <a href="#services" class="learn-more">Selengkapnya <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+            <div class="value-card featured">
+              <div class="featured-badge">Terpopuler</div>
+              <div class="icon-box">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <h4>Jaringan Luas</h4>
+              <p>Bergabung dengan ribuan alumni HMI di berbagai sektor yang siap membantu pengembangan karir Anda.</p>
+              <a href="#contact" class="learn-more">Selengkapnya <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
+            <div class="value-card">
+              <div class="icon-box">
+                <i class="bi bi-trophy-fill"></i>
+              </div>
+              <h4>Pengalaman Organisasi</h4>
+              <p>Kesempatan mengembangkan leadership, public speaking, dan soft skills lainnya melalui kegiatan organisasi.</p>
+              <a href="#portfolio" class="learn-more">Selengkapnya <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row align-items-center">
+          <div class="col-lg-6 order-lg-2" data-aos="fade-left" data-aos-delay="200">
+            <div class="capabilities-content">
+              <h3>Nilai Dasar Perjuangan HMI</h3>
+              <p>HMI memiliki nilai-nilai fundamental yang menjadi pedoman dalam setiap aktivitas dan pengambilan keputusan organisasi.</p>
+
+              <div class="capability-list">
+                <div class="capability-item">
+                  <div class="capability-header">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <h5>Keislaman</h5>
+                  </div>
+                  <p>Menjadikan nilai-nilai Islam sebagai landasan dalam berpikir, bersikap, dan bertindak.</p>
+                </div>
+
+                <div class="capability-item">
+                  <div class="capability-header">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <h5>Keindonesiaan</h5>
+                  </div>
+                  <p>Berkomitmen untuk kemajuan bangsa Indonesia dengan tetap menjunjung nilai Pancasila dan UUD 1945.</p>
+                </div>
+
+                <div class="capability-item">
+                  <div class="capability-header">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <h5>Kemanusiaan</h5>
+                  </div>
+                  <p>Menjunjung tinggi nilai-nilai kemanusiaan universal dan berperan aktif dalam pemberdayaan masyarakat.</p>
+                </div>
+              </div>
+
+              <div class="cta-buttons">
+                <a href="#contact" class="btn btn-primary">Bergabung Sekarang</a>
+                <a href="#about" class="btn btn-secondary">Pelajari Lebih Lanjut</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 order-lg-1" data-aos="fade-right" data-aos-delay="300">
+            <div class="process-visual">
+              <div class="process-step" data-aos="fade-up" data-aos-delay="400">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                  <h6>Pendaftaran</h6>
+                  <p>Daftar menjadi anggota</p>
+                </div>
+              </div>
+              <div class="process-step" data-aos="fade-up" data-aos-delay="450">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                  <h6>Latihan Kader</h6>
+                  <p>Mengikuti LK I, II, III</p>
+                </div>
+              </div>
+              <div class="process-step" data-aos="fade-up" data-aos-delay="500">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                  <h6>Pengembangan</h6>
+                  <p>Aktif dalam kegiatan</p>
+                </div>
+              </div>
+              <div class="process-step" data-aos="fade-up" data-aos-delay="550">
+                <div class="step-number">04</div>
+                <div class="step-content">
+                  <h6>Kontribusi</h6>
+                  <p>Mengabdi kepada umat</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Why Us Section -->
+
+    <!-- Team Section -->
+    <section id="team" class="team section">
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Pengurus</h2>
+        <div><span>Struktur</span> <span class="description-title">Kepengurusan</span></div>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="team-header" data-aos="fade-up" data-aos-delay="200">
+          <div class="row align-items-center">
+            <div class="col-lg-6">
+              <h2>Pengurus Cabang HMI Malang</h2>
+              <p>Tim pengurus yang berdedikasi untuk memajukan HMI Cabang Malang dan membina kader-kader berkualitas.</p>
+            </div>
+            <div class="col-lg-6 d-flex justify-content-lg-end">
+              <div class="team-controls">
+                <button class="team-control-btn team-prev"><i class="bi bi-chevron-left"></i></button>
+                <button class="team-control-btn team-next"><i class="bi bi-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-slider swiper init-swiper" data-aos="fade-up" data-aos-delay="300">
+          <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 700,
+              "autoplay": {
+                "delay": 5000
+              },
+              "slidesPerView": 1,
+              "spaceBetween": 30,
+              "navigation": {
+                "nextEl": ".team-next",
+                "prevEl": ".team-prev"
+              },
+              "breakpoints": {
+                "576": {
+                  "slidesPerView": 2,
+                  "spaceBetween": 20
+                },
+                "992": {
+                  "slidesPerView": 3,
+                  "spaceBetween": 30
+                },
+                "1200": {
+                  "slidesPerView": 4,
+                  "spaceBetween": 30
+                }
+              }
+            }
+          </script>
+          <div class="swiper-wrapper">
+
+            <div class="swiper-slide">
+              <div class="team-member">
+                <div class="member-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/person/person-m-3.webp" class="img-fluid" alt="" loading="lazy">
+                  <div class="member-social">
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-content">
+                  <h3>Ahmad Fauzi</h3>
+                  <span>Ketua Umum</span>
+                  <p>Memimpin dan mengkoordinir seluruh kegiatan HMI Cabang Malang.</p>
+                </div>
+              </div>
+            </div><!-- End slide item -->
+
+            <div class="swiper-slide">
+              <div class="team-member">
+                <div class="member-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/person/person-f-5.webp" class="img-fluid" alt="" loading="lazy">
+                  <div class="member-social">
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-content">
+                  <h3>Siti Nurhaliza</h3>
+                  <span>Sekretaris Umum</span>
+                  <p>Mengelola administrasi dan surat-menyurat organisasi.</p>
+                </div>
+              </div>
+            </div><!-- End slide item -->
+
+            <div class="swiper-slide">
+              <div class="team-member">
+                <div class="member-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/person/person-m-8.webp" class="img-fluid" alt="" loading="lazy">
+                  <div class="member-social">
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-content">
+                  <h3>Muhammad Ridwan</h3>
+                  <span>Bendahara Umum</span>
+                  <p>Mengelola keuangan dan aset organisasi.</p>
+                </div>
+              </div>
+            </div><!-- End slide item -->
+
+            <div class="swiper-slide">
+              <div class="team-member">
+                <div class="member-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/person/person-f-9.webp" class="img-fluid" alt="" loading="lazy">
+                  <div class="member-social">
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-content">
+                  <h3>Dewi Kartika</h3>
+                  <span>Ketua Bidang Kaderisasi</span>
+                  <p>Bertanggung jawab atas pembinaan dan pelatihan kader.</p>
+                </div>
+              </div>
+            </div><!-- End slide item -->
+
+            <div class="swiper-slide">
+              <div class="team-member">
+                <div class="member-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/person/person-m-12.webp" class="img-fluid" alt="" loading="lazy">
+                  <div class="member-social">
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-content">
+                  <h3>Hasan Basri</h3>
+                  <span>Ketua Bidang Kajian</span>
+                  <p>Mengkoordinir kegiatan kajian dan diskusi keislaman.</p>
+                </div>
+              </div>
+            </div><!-- End slide item -->
+
+            <div class="swiper-slide">
+              <div class="team-member">
+                <div class="member-image">
+                  <img src="https://bootstrapmade.com/content/demo/Forma/assets/img/person/person-f-7.webp" class="img-fluid" alt="" loading="lazy">
+                  <div class="member-social">
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-content">
+                  <h3>Fatimah Azzahra</h3>
+                  <span>Ketua Bidang Sosial</span>
+                  <p>Mengelola program pengabdian masyarakat dan bakti sosial.</p>
+                </div>
+              </div>
+            </div><!-- End slide item -->
+
+          </div>
+        </div>
+
+      </div>
+    </section><!-- /Team Section -->
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Contact</h2>
+        <div><span>Need Help?&nbsp;</span> <span class="description-title">Contact Us</span></div>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row g-5">
+
+          <div class="col-lg-6">
+            <div class="contact-intro">
+              <div class="intro-badge">
+                <i class="bi bi-rocket-takeoff"></i>
+                <span>Let's Build Something Amazing</span>
+              </div>
+              <h2>Ready to Transform Your Digital Presence?</h2>
+              <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+            </div>
+
+            <div class="contact-channels">
+              <div class="channel-card">
+                <div class="channel-icon">
+                  <i class="bi bi-envelope-fill"></i>
+                </div>
+                <div class="channel-info">
+                  <h5>Email</h5>
+                  <p><a href="https://bootstrapmade.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="573f323b3b3817322f363a273b327934383a">[email&#160;protected]</a></p>
+                  <span class="channel-meta">We reply within 4 hours</span>
+                </div>
+              </div>
+
+              <div class="channel-card">
+                <div class="channel-icon">
+                  <i class="bi bi-telephone-fill"></i>
+                </div>
+                <div class="channel-info">
+                  <h5>Phone</h5>
+                  <p>+1 (555) 234-5678</p>
+                  <span class="channel-meta">Mon-Fri, 9AM-6PM EST</span>
+                </div>
+              </div>
+
+              <div class="channel-card">
+                <div class="channel-icon">
+                  <i class="bi bi-geo-alt-fill"></i>
+                </div>
+                <div class="channel-info">
+                  <h5>Office</h5>
+                  <p>5632 Market Street, San Francisco, CA 94102</p>
+                  <span class="channel-meta">Visit us anytime</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="trust-indicators">
+              <div class="indicator-item">
+                <div class="indicator-value">2.5k+</div>
+                <div class="indicator-label">Happy Clients</div>
+              </div>
+              <div class="indicator-item">
+                <div class="indicator-value">4.9/5</div>
+                <div class="indicator-label">Client Rating</div>
+              </div>
+              <div class="indicator-item">
+                <div class="indicator-value">15min</div>
+                <div class="indicator-label">Avg Response</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="form-wrapper">
+              <div class="form-header">
+                <h3>Start Your Project</h3>
+                <p>Tell us about your project and we'll get back to you with a tailored solution.</p>
+              </div>
+
+              <form action="https://bootstrapmade.com/content/demo/Forma/forms/contact.php" method="post" class="php-email-form">
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input type="text" name="name" class="form-control" required="">
+                </div>
+
+                <div class="form-group">
+                  <label>Email Address</label>
+                  <input type="email" name="email" class="form-control" required="">
+                </div>
+
+                <div class="form-group">
+                  <label for="company">Subject</label>
+                  <input type="text" name="ubject" class="form-control" required="">
+                </div>
+
+                <div class="form-group">
+                  <label>Message</label>
+                  <textarea name="message" class="form-control" rows="5" required=""></textarea>
+                </div>
+                <div class="loading">Loading</div>
+                <div class="error-message"></div>
+                <div class="sent-message">Your message has been sent. Thank you!</div>
+
+                <button type="submit" class="submit-btn">
+                  <span>Send Message</span>
+                  <i class="bi bi-arrow-right"></i>
+                </button>
+
+                <div class="form-footer">
+                  <i class="bi bi-shield-check"></i>
+                  <span>Your information is secure and will never be shared</span>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /Contact Section -->
+
+  </main>
+
+  <footer id="footer" class="footer">
+
+    <div class="container footer-top">
+      <div class="row gy-4">
+        <div class="col-lg-5 col-md-12 footer-about">
+          <a href="https://bootstrapmade.com/content/demo/Forma/index.html" class="logo d-flex align-items-center">
+            <span class="sitename">Forma</span>
+          </a>
+          <p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam phasellus.</p>
+          <div class="social-links d-flex mt-4">
+            <a href="#"><i class="bi bi-twitter-x"></i></a>
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-instagram"></i></a>
+            <a href="#"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-6 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Terms of service</a></li>
+            <li><a href="#">Privacy policy</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-6 footer-links">
+          <h4>Our Services</h4>
+          <ul>
+            <li><a href="#">Web Design</a></li>
+            <li><a href="#">Web Development</a></li>
+            <li><a href="#">Product Management</a></li>
+            <li><a href="#">Marketing</a></li>
+            <li><a href="#">Graphic Design</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
+          <h4>Contact Us</h4>
+          <p>A108 Adam Street</p>
+          <p>New York, NY 535022</p>
+          <p>United States</p>
+          <p class="mt-4"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
+          <p><strong>Email:</strong> <span><a href="https://bootstrapmade.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d1b8bfb7be91b4a9b0bca1bdb4ffb2bebc">[email&#160;protected]</a></span></p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Forma</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/vendors/aos/aos.js"></script>
+  <script src="/vendors/glightbox/js/glightbox.min.js"></script>
+  <script src="/vendors/purecounter/purecounter_vanilla.js"></script>
+  <script src="/vendors/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="/vendors/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="/vendors/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="/js/main.js"></script>
+
+</body>
+
+</html>
