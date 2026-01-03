@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %> - Dashboard</title>
-
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/dashboard-template/dist/assets/css/bootstrap.css">
@@ -19,60 +18,59 @@
 <body>
   <div id="app">
     <%- include('../partials/sidebar') %>
-
     <div id="main">
       <%- include('../partials/header') %>
 
+      <!-- Page Heading dengan Title dan Breadcrumb -->
       <div class="page-heading">
+        <% if (typeof hideBreadcrumb === 'undefined' || !hideBreadcrumb) { %>
+        <div class="page-title">
+          <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+              <h3><%= title %></h3>
+              <% if (typeof subtitle !== 'undefined') { %>
+              <p class="text-subtitle text-muted"><%= subtitle %></p>
+              <% } %>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+              <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                  <% if (typeof breadcrumbs !== 'undefined' && breadcrumbs.length > 0) { %>
+                  <% breadcrumbs.forEach(function(crumb, index) { %>
+                  <% if (index === breadcrumbs.length - 1) { %>
+                  <li class="breadcrumb-item active" aria-current="page"><%= crumb.label %></li>
+                  <% } else { %>
+                  <li class="breadcrumb-item"><a href="<%= crumb.url %>"><%= crumb.label %></a></li>
+                  <% } %>
+                  <% }); %>
+                  <% } else { %>
+                  <li class="breadcrumb-item active" aria-current="page"><%= title %></li>
+                  <% } %>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+        <% } else { %>
+        <!-- Simple heading tanpa breadcrumb untuk dashboard -->
         <h3><%= title %></h3>
+        <% } %>
       </div>
 
       <div class="page-content">
         <%- body %>
+
       </div>
 
       <%- include('../partials/footer') %>
     </div>
   </div>
-
   <script src="/dashboard-template/dist/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
   <script src="/dashboard-template/dist/assets/js/bootstrap.bundle.min.js"></script>
   <script src="/dashboard-template/dist/assets/vendors/apexcharts/apexcharts.js"></script>
-  <!-- <script src="/dashboard-template/dist/assets/js/pages/dashboard.js"></script> -->
   <script src="/dashboard-template/dist/assets/js/main.js"></script>
-
-  <script>
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-      const searchValue = this.value.toLowerCase();
-      const rows = document.querySelectorAll('#userTable tbody tr');
-
-      rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(searchValue) ? '' : 'none';
-      });
-    });
-
-    // Filter by role
-    function filterByRole(roleLevel) {
-      const rows = document.querySelectorAll('#userTable tbody tr');
-
-      rows.forEach(row => {
-        if (roleLevel === 'all') {
-          row.style.display = '';
-        } else {
-          const userRole = row.getAttribute('data-role');
-          row.style.display = userRole === roleLevel ? '' : 'none';
-        }
-      });
-    }
-
-    // Delete confirmation
-    function confirmDelete(userId, username) {
-      document.getElementById('deleteUsername').textContent = username;
-      document.getElementById('deleteForm').action = '/users/delete/' + userId;
-      new bootstrap.Modal(document.getElementById('deleteModal')).show();
-    }
-  </script>
+  <%- script %>
 </body>
 
 </html>

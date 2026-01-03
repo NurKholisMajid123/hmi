@@ -1,85 +1,87 @@
-<!-- ============================================ -->
-<!-- views/users/index.ejs - List All Users -->
-<!-- ============================================ -->
-<section class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="d-flex justify-content-between align-items-center">
-          <h4 class="card-title">Daftar User</h4>
-          <a href="/users/create" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Tambah User
-          </a>
-        </div>
-      </div>
-      <div class="card-body">
-        <!-- Alert Messages -->
-        <% if (typeof query !== 'undefined' && query.success) { %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <i class="bi bi-check-circle"></i> <%= query.success %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        <% } %>
-
-        <% if (typeof query !== 'undefined' && query.error) { %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <i class="bi bi-exclamation-triangle"></i> <%= query.error %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        <% } %>
-
-        <!-- Search Box -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-search"></i></span>
-              <input type="text" class="form-control" id="searchInput" placeholder="Cari user...">
-            </div>
-          </div>
-          <div class="col-md-6 text-end">
-            <div class="btn-group" role="group">
-              <button type="button" class="btn btn-outline-primary" onclick="filterByRole('all')">Semua</button>
-              <button type="button" class="btn btn-outline-primary" onclick="filterByRole('1')">Admin</button>
-              <button type="button" class="btn btn-outline-primary" onclick="filterByRole('2')">Ketua</button>
-              <button type="button" class="btn btn-outline-primary" onclick="filterByRole('5')">Anggota</button>
-            </div>
+<!-- Users Table Section -->
+<section class="section">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title">Data User</h4>
+            <a href="/users/create" class="btn btn-primary">
+              <i class="bi bi-plus-circle"></i> Tambah User
+            </a>
           </div>
         </div>
+        <div class="card-content">
+          <div class="card-body">
+            <!-- Alert Messages -->
+            <% if (typeof query !== 'undefined' && query.success) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <i class="bi bi-check-circle"></i> <%= query.success %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <% } %>
 
-        <div class="table-responsive">
-          <table class="table table-hover" id="userTable">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Username</th>
-                <th>Nama Lengkap</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% if (users && users.length > 0) { %>
-              <% users.forEach((user, index) => { %>
-              <tr data-role="<%= user.role_level %>">
-                <td><%= index + 1 %></td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <div class="avatar avatar-md me-2">
-                      <% if (user.profile_photo) { %>
-                      <img src="<%= user.profile_photo %>" alt="Avatar">
-                      <% } else { %>
-                      <img src="/dashboard-template/dist/assets/images/faces/1.jpg" alt="Avatar">
-                      <% } %>
+            <% if (typeof query !== 'undefined' && query.error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <i class="bi bi-exclamation-triangle"></i> <%= query.error %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <% } %>
+
+            <!-- Search and Filter Row -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-search"></i></span>
+                  <input type="text" class="form-control" id="searchInput" placeholder="Cari user...">
+                </div>
+              </div>
+              <div class="col-md-6 text-end">
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-outline-primary active" onclick="filterByRole('all')">Semua</button>
+                  <button type="button" class="btn btn-outline-primary" onclick="filterByRole('1')">Admin</button>
+                  <button type="button" class="btn btn-outline-primary" onclick="filterByRole('2')">Ketua</button>
+                  <button type="button" class="btn btn-outline-primary" onclick="filterByRole('5')">Anggota</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table with outer spacing -->
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="userTable">
+              <thead>
+                <tr>
+                  <th>NO</th>
+                  <th>USERNAME</th>
+                  <th>NAMA LENGKAP</th>
+                  <th>EMAIL</th>
+                  <th>ROLE</th>
+                  <th>STATUS</th>
+                  <th>AKSI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (users && users.length > 0) { %>
+                <% users.forEach((user, index) => { %>
+                <tr data-role="<%= user.role_level %>">
+                  <td class="text-bold-500"><%= index + 1 %></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar avatar-md me-3">
+                        <% if (user.profile_photo) { %>
+                        <img src="<%= user.profile_photo %>" alt="Avatar">
+                        <% } else { %>
+                        <img src="/dashboard-template/dist/assets/images/faces/1.jpg" alt="Avatar">
+                        <% } %>
+                      </div>
+                      <span class="text-bold-500"><%= user.username %></span>
                     </div>
-                    <strong><%= user.username %></strong>
-                  </div>
-                </td>
-                <td><%= user.full_name %></td>
-                <td><%= user.email %></td>
-                <td>
-                  <% 
+                  </td>
+                  <td><%= user.full_name %></td>
+                  <td><%= user.email %></td>
+                  <td>
+                    <% 
                       let badgeClass = 'bg-secondary';
                       if (user.role_level === 1) badgeClass = 'bg-danger';
                       else if (user.role_level === 2) badgeClass = 'bg-primary';
@@ -87,39 +89,47 @@
                       else if (user.role_level === 4) badgeClass = 'bg-warning';
                       else if (user.role_level === 5) badgeClass = 'bg-success';
                     %>
-                  <span class="badge <%= badgeClass %>"><%= user.role_name %></span>
-                </td>
-                <td>
-                  <% if (user.is_active) { %>
-                  <span class="badge bg-success">Aktif</span>
-                  <% } else { %>
-                  <span class="badge bg-secondary">Tidak Aktif</span>
-                  <% } %>
-                </td>
-                <td>
-                  <div class="btn-group" role="group">
-                    <a href="/users/<%= user.id %>" class="btn btn-sm btn-info" title="Detail">
-                      <i class="bi bi-eye"></i>
-                    </a>
-                    <a href="/users/edit/<%= user.id %>" class="btn btn-sm btn-warning" title="Edit">
-                      <i class="bi bi-pencil"></i>
-                    </a>
-                    <% if (users[index].id !== user.userId) { %>
-                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(<%= users[index].id %>, '<%= users[index].username %>')" title="Hapus">
-                      <i class="bi bi-trash"></i>
-                    </button>
+                    <span class="badge <%= badgeClass %>"><%= user.role_name %></span>
+                  </td>
+                  <td>
+                    <% if (user.is_active) { %>
+                    <span class="badge bg-success">
+                      <i class="bi bi-check-circle"></i> Aktif
+                    </span>
+                    <% } else { %>
+                    <span class="badge bg-secondary">
+                      <i class="bi bi-x-circle"></i> Tidak Aktif
+                    </span>
                     <% } %>
-                  </div>
-                </td>
-              </tr>
-              <% }) %>
-              <% } else { %>
-              <tr>
-                <td colspan="7" class="text-center">Tidak ada data user</td>
-              </tr>
-              <% } %>
-            </tbody>
-          </table>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <a href="/users/<%= user.id %>" class="btn btn-sm btn-info" title="Detail">
+                        <i class="bi bi-eye"></i>
+                      </a>
+                      <a href="/users/edit/<%= user.id %>" class="btn btn-sm btn-warning" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <% if (user.id !== locals.userId) { %>
+                      <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(<%= user.id %>, '<%= user.username %>')" title="Hapus">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %>
+                <% } else { %>
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-2">Tidak ada data user</p>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -127,21 +137,33 @@
 </section>
 
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-  <div class="modal-dialog">
+<div class="modal fade text-left" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Konfirmasi Hapus</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title white" id="deleteModalLabel">
+          <i class="bi bi-exclamation-triangle"></i> Konfirmasi Hapus
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <i data-feather="x"></i>
+        </button>
       </div>
       <div class="modal-body">
-        <p>Apakah Anda yakin ingin menghapus user <strong id="deleteUsername"></strong>?</p>
-        <p class="text-danger"><small>Data yang dihapus tidak dapat dikembalikan!</small></p>
+        <p>Apakah Anda yakin ingin menghapus user <strong id="deleteUsername" class="text-danger"></strong>?</p>
+        <div class="alert alert-light-warning color-warning">
+          <i class="bi bi-info-circle"></i> <strong>Perhatian!</strong> Data yang dihapus tidak dapat dikembalikan!
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+          <i class="bx bx-x d-block d-sm-none"></i>
+          <span class="d-none d-sm-block">Batal</span>
+        </button>
         <form id="deleteForm" method="POST" style="display: inline;">
-          <button type="submit" class="btn btn-danger">Hapus</button>
+          <button type="submit" class="btn btn-danger ml-1">
+            <i class="bx bx-check d-block d-sm-none"></i>
+            <span class="d-none d-sm-block">Hapus</span>
+          </button>
         </form>
       </div>
     </div>
@@ -150,5 +172,49 @@
 
 <script>
   // Search functionality
- 
+  document.getElementById('searchInput').addEventListener('keyup', function() {
+    const searchValue = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#userTable tbody tr');
+
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(searchValue) ? '' : 'none';
+    });
+  });
+
+  // Filter by role
+  function filterByRole(roleLevel) {
+    const rows = document.querySelectorAll('#userTable tbody tr');
+    const buttons = document.querySelectorAll('.btn-group button');
+
+    // Update active button
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    rows.forEach(row => {
+      if (roleLevel === 'all') {
+        row.style.display = '';
+      } else {
+        const userRole = row.getAttribute('data-role');
+        row.style.display = userRole === roleLevel ? '' : 'none';
+      }
+    });
+  }
+
+  // Delete confirmation
+  function confirmDelete(userId, username) {
+    document.getElementById('deleteUsername').textContent = username;
+    document.getElementById('deleteForm').action = '/users/delete/' + userId;
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+  }
+
+  // Auto dismiss alerts after 5 seconds
+  setTimeout(function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+      const bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    });
+  }, 5000);
 </script>

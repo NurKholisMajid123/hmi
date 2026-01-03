@@ -7,12 +7,13 @@ const userController = {
     try {
       const users = await User.findAll();
       res.render('users/index', {
-        title: 'Manajemen User',
+        title: 'Daftar User',
+        subtitle: 'Manajemen data pengguna sistem',
         layout: 'layouts/dashboard',
         activeMenu: 'users',
         users,
         currentUser: req.session,
-        query: req.query // Untuk alert messages
+        query: req.query
       });
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -26,7 +27,12 @@ const userController = {
       const roles = await Role.findAll();
       res.render('users/create', {
         title: 'Tambah User Baru',
+        subtitle: 'Form untuk menambahkan pengguna baru',
         layout: 'layouts/dashboard',
+        breadcrumbs: [
+          { label: 'User', url: '/users' },
+          { label: 'Tambah User', url: '#' }
+        ],
         activeMenu: 'users',
         roles,
         error: null
@@ -42,15 +48,37 @@ const userController = {
     try {
       const { username, email, password, full_name, phone, address, role_id, is_active } = req.body;
 
-      // Validasi
+      // Validasi field wajib
       if (!username || !email || !password || !full_name || !role_id) {
         const roles = await Role.findAll();
         return res.render('users/create', {
           title: 'Tambah User Baru',
+          subtitle: 'Form untuk menambahkan pengguna baru',
           layout: 'layouts/dashboard',
+          breadcrumbs: [
+            { label: 'User', url: '/users' },
+            { label: 'Tambah User', url: '#' }
+          ],
           activeMenu: 'users',
           roles,
           error: 'Semua field wajib diisi'
+        });
+      }
+
+      // Validasi panjang password
+      if (password.length < 6) {
+        const roles = await Role.findAll();
+        return res.render('users/create', {
+          title: 'Tambah User Baru',
+          subtitle: 'Form untuk menambahkan pengguna baru',
+          layout: 'layouts/dashboard',
+          breadcrumbs: [
+            { label: 'User', url: '/users' },
+            { label: 'Tambah User', url: '#' }
+          ],
+          activeMenu: 'users',
+          roles,
+          error: 'Password minimal 6 karakter'
         });
       }
 
@@ -60,36 +88,46 @@ const userController = {
         const roles = await Role.findAll();
         return res.render('users/create', {
           title: 'Tambah User Baru',
+          subtitle: 'Form untuk menambahkan pengguna baru',
           layout: 'layouts/dashboard',
+          breadcrumbs: [
+            { label: 'User', url: '/users' },
+            { label: 'Tambah User', url: '#' }
+          ],
           activeMenu: 'users',
           roles,
           error: 'Username sudah digunakan'
         });
       }
 
-      // Check email exists
+      // Check email exists - FIXED: Error message yang benar
       const existingEmail = await User.findByEmail(email);
       if (existingEmail) {
         const roles = await Role.findAll();
         return res.render('users/create', {
           title: 'Tambah User Baru',
+          subtitle: 'Form untuk menambahkan pengguna baru',
           layout: 'layouts/dashboard',
+          breadcrumbs: [
+            { label: 'User', url: '/users' },
+            { label: 'Tambah User', url: '#' }
+          ],
           activeMenu: 'users',
           roles,
           error: 'Email sudah digunakan'
         });
       }
 
-      // Create user
+      // Create user - FIXED: Tambahkan is_active
       await User.create({
         username,
         email,
         password,
         full_name,
-        phone,
-        address,
+        phone: phone || null,
+        address: address || null,
         role_id,
-        is_active: is_active === 'on' ? true : false
+        is_active: is_active === 'on'
       });
 
       res.redirect('/users?success=User berhasil ditambahkan');
@@ -99,11 +137,45 @@ const userController = {
       const roles = await Role.findAll();
       res.render('users/create', {
         title: 'Tambah User Baru',
+        subtitle: 'Form untuk menambahkan pengguna baru',
         layout: 'layouts/dashboard',
+        breadcrumbs: [
+          { label: 'User', url: '/users' },
+          { label: 'Tambah User', url: '#' }
+        ],
         activeMenu: 'users',
         roles,
         error: 'Terjadi kesalahan saat membuat user'
       });
+    }
+  },
+
+  // Show user detail
+  show: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = await User.findById(id);
+
+      if (!user) {
+        return res.redirect('/users?error=User tidak ditemukan');
+      }
+
+      res.render('users/detail', {
+        title: 'Detail User',
+        subtitle: `Informasi lengkap user ${user.username}`,
+        layout: 'layouts/dashboard',
+        breadcrumbs: [
+          { label: 'User', url: '/users' },
+          { label: 'Detail User', url: '#' }
+        ],
+        activeMenu: 'users',
+        user: req.session, // Session user untuk sidebar/navbar
+        viewUser: user, // User yang ditampilkan
+        currentUserId: req.session.userId
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      res.redirect('/users?error=Terjadi kesalahan');
     }
   },
 
@@ -120,9 +192,16 @@ const userController = {
 
       res.render('users/edit', {
         title: 'Edit User',
+        subtitle: `Ubah data user ${user.username}`,
         layout: 'layouts/dashboard',
+        breadcrumbs: [
+          { label: 'User', url: '/users' },
+          { label: 'Edit User', url: '#' }
+        ],
         activeMenu: 'users',
-        user,
+        user: req.session, // Session user untuk sidebar/navbar
+        editUser: user, // User yang akan diedit
+        currentUserId: req.session.userId,
         roles,
         error: null
       });
@@ -136,18 +215,110 @@ const userController = {
   update: async (req, res) => {
     try {
       const { id } = req.params;
-      const { new_password, confirm_password, is_active, ...userData } = req.body;
+      const { username, email, full_name, phone, address, role_id, new_password, confirm_password, is_active } = req.body;
+
+      // Validasi field wajib
+      if (!username || !email || !full_name || !role_id) {
+        const user = await User.findById(id);
+        const roles = await Role.findAll();
+        return res.render('users/edit', {
+          title: 'Edit User',
+          subtitle: `Ubah data user ${user.username}`,
+          layout: 'layouts/dashboard',
+          breadcrumbs: [
+            { label: 'User', url: '/users' },
+            { label: 'Edit User', url: '#' }
+          ],
+          activeMenu: 'users',
+          user: req.session,
+          editUser: user,
+          currentUserId: req.session.userId,
+          roles,
+          error: 'Semua field wajib diisi'
+        });
+      }
+
+      // Check username sudah digunakan user lain
+      const existingUsername = await User.findByUsername(username);
+      if (existingUsername && existingUsername.id !== parseInt(id)) {
+        const user = await User.findById(id);
+        const roles = await Role.findAll();
+        return res.render('users/edit', {
+          title: 'Edit User',
+          subtitle: `Ubah data user ${user.username}`,
+          layout: 'layouts/dashboard',
+          breadcrumbs: [
+            { label: 'User', url: '/users' },
+            { label: 'Edit User', url: '#' }
+          ],
+          activeMenu: 'users',
+          user: req.session,
+          editUser: user,
+          currentUserId: req.session.userId,
+          roles,
+          error: 'Username sudah digunakan oleh user lain'
+        });
+      }
+
+      // Check email sudah digunakan user lain
+      const existingEmail = await User.findByEmail(email);
+      if (existingEmail && existingEmail.id !== parseInt(id)) {
+        const user = await User.findById(id);
+        const roles = await Role.findAll();
+        return res.render('users/edit', {
+          title: 'Edit User',
+          subtitle: `Ubah data user ${user.username}`,
+          layout: 'layouts/dashboard',
+          breadcrumbs: [
+            { label: 'User', url: '/users' },
+            { label: 'Edit User', url: '#' }
+          ],
+          activeMenu: 'users',
+          user: req.session,
+          editUser: user,
+          currentUserId: req.session.userId,
+          roles,
+          error: 'Email sudah digunakan oleh user lain'
+        });
+      }
 
       // Handle password update
       if (new_password) {
+        if (new_password.length < 6) {
+          const user = await User.findById(id);
+          const roles = await Role.findAll();
+          return res.render('users/edit', {
+            title: 'Edit User',
+            subtitle: `Ubah data user ${user.username}`,
+            layout: 'layouts/dashboard',
+            breadcrumbs: [
+              { label: 'User', url: '/users' },
+              { label: 'Edit User', url: '#' }
+            ],
+            activeMenu: 'users',
+            user: req.session,
+            editUser: user,
+            currentUserId: req.session.userId,
+            roles,
+            error: 'Password minimal 6 karakter'
+          });
+        }
+
         if (new_password !== confirm_password) {
           const user = await User.findById(id);
           const roles = await Role.findAll();
           return res.render('users/edit', {
             title: 'Edit User',
+            subtitle: `Ubah data user ${user.username}`,
             layout: 'layouts/dashboard',
+            breadcrumbs: [
+              { label: 'User', url: '/users' },
+              { label: 'Edit User', url: '#' }
+            ],
             activeMenu: 'users',
-            user,
+            user: req.session,
+            editUser: user,
+            currentUserId: req.session.userId,
             roles,
             error: 'Password baru tidak cocok'
           });
@@ -157,14 +328,19 @@ const userController = {
 
       // Update user data
       await User.update(id, {
-        ...userData,
-        is_active: is_active === 'on' ? true : false
+        username,
+        email,
+        full_name,
+        phone: phone || null,
+        address: address || null,
+        role_id,
+        is_active: is_active === 'on'
       });
 
       res.redirect('/users?success=User berhasil diupdate');
     } catch (error) {
       console.error('Error updating user:', error);
-      res.redirect(`/users/edit/${id}?error=Gagal mengupdate user`);
+      res.redirect(`/users/${id}/edit?error=Gagal mengupdate user`);
     }
   },
 
@@ -192,13 +368,115 @@ const userController = {
       const user = await User.findById(req.session.userId);
       res.render('users/profile', {
         title: 'Profil Saya',
+        subtitle: 'Kelola informasi profil Anda',
         layout: 'layouts/dashboard',
+        breadcrumbs: [
+          { label: 'Profil', url: '#' }
+        ],
         activeMenu: 'profile',
-        user
+        user,
+        query: req.query
       });
     } catch (error) {
       console.error('Error:', error);
       res.status(500).send('Terjadi kesalahan');
+    }
+  },
+
+  // Update profile
+  updateProfile: async (req, res) => {
+    try {
+      const userId = req.session.userId;
+      const { full_name, email, phone, address } = req.body;
+
+      // Validasi
+      if (!full_name || !email) {
+        const user = await User.findById(userId);
+        return res.render('users/profile', {
+          title: 'Profil Saya',
+          subtitle: 'Kelola informasi profil Anda',
+          layout: 'layouts/dashboard',
+          breadcrumbs: [
+            { label: 'Profil', url: '#' }
+          ],
+          activeMenu: 'profile',
+          user,
+          error: 'Nama lengkap dan email wajib diisi'
+        });
+      }
+
+      // Check if email is already used by another user
+      const existingEmail = await User.findByEmail(email);
+      if (existingEmail && existingEmail.id !== userId) {
+        const user = await User.findById(userId);
+        return res.render('users/profile', {
+          title: 'Profil Saya',
+          subtitle: 'Kelola informasi profil Anda',
+          layout: 'layouts/dashboard',
+          breadcrumbs: [
+            { label: 'Profil', url: '#' }
+          ],
+          activeMenu: 'profile',
+          user,
+          error: 'Email sudah digunakan oleh user lain'
+        });
+      }
+
+      await User.update(userId, {
+        full_name,
+        email,
+        phone: phone || null,
+        address: address || null
+      });
+
+      // Update session
+      req.session.fullName = full_name;
+      req.session.email = email;
+
+      res.redirect('/users/profile?success=Profil berhasil diupdate');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      res.redirect('/users/profile?error=Gagal mengupdate profil');
+    }
+  },
+
+  // Change password
+  changePassword: async (req, res) => {
+    try {
+      const userId = req.session.userId;
+      const { current_password, new_password, confirm_password } = req.body;
+
+      // Validasi
+      if (!current_password || !new_password || !confirm_password) {
+        return res.redirect('/users/profile?error=Semua field password wajib diisi');
+      }
+
+      // Validasi panjang password
+      if (new_password.length < 6) {
+        return res.redirect('/users/profile?error=Password baru minimal 6 karakter');
+      }
+
+      // Validate new password match
+      if (new_password !== confirm_password) {
+        return res.redirect('/users/profile?error=Password baru tidak cocok');
+      }
+
+      // Verify current password
+      const user = await User.findById(userId);
+      const bcrypt = require('bcrypt');
+      const isValid = await bcrypt.compare(current_password, user.password);
+
+      if (!isValid) {
+        return res.redirect('/users/profile?error=Password lama salah');
+      }
+
+      // Update password
+      await User.updatePassword(userId, new_password);
+      res.redirect('/users/profile?success=Password berhasil diubah');
+
+    } catch (error) {
+      console.error('Error changing password:', error);
+      res.redirect('/users/profile?error=Gagal mengubah password');
     }
   }
 };

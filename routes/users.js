@@ -20,24 +20,6 @@ router.post('/delete/:id', isAdmin, userController.delete);
 router.get('/delete/:id', isAdmin, userController.delete);
 
 // View user detail
-router.get('/:id', isAdmin, noCache, async (req, res) => {
-    try {
-        const User = require('../models/User');
-        const user = await User.findById(req.params.id);
-
-        if (!user) {
-            return res.redirect('/users?error=User tidak ditemukan');
-        }
-
-        res.render('users/detail', {
-            title: 'Detail User',
-            viewUser: user,
-            layout: 'layouts/dashboard'
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        res.redirect('/users?error=Terjadi kesalahan');
-    }
-});
+router.get('/:id', isAdmin, noCache, userController.show);
 
 module.exports = router;
