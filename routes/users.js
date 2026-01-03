@@ -2,9 +2,37 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Role = require('../models/Role');
-const bcrypt = require('bcrypt');
 const { isAdmin, noCache } = require('../middleware/auth');
-const { validateUserCreate, validateUserUpdate, sanitizeInput } = require('../middleware/validation');
+const { sanitizeInput, validateEmail } = require('../middleware/validation');
+
+// Helper function untuk render form
+const renderForm = (res, type, data = {}) => {
+  const isEdit = type === 'edit';
+  const baseData = {
+    layout: 'layouts/dashboard',
+    activeMenu: 'users',
+    breadcrumbs: [
+      { label: 'User', url: '/users' },
+      { label: isEdit ? 'Edit User' : 'Tambah User', url: '#' }
+    ],
+    error: null,
+    ...data
+  };
+  
+  if (isEdit) {
+    return res.render('users/edit', {
+      title: 'Edit User',
+      subtitle: `Ubah data user ${data.editUser?.username}`,
+      ...baseData
+    });
+  }
+  
+  return res.render('users/create', {
+    title: 'Tambah User Baru',
+    subtitle: 'Form untuk menambahkan pengguna baru',
+    ...baseData
+  });
+};
 
 // List all users
 router.get('/', isAdmin, noCache, async (req, res) => {
@@ -16,7 +44,6 @@ router.get('/', isAdmin, noCache, async (req, res) => {
       layout: 'layouts/dashboard',
       activeMenu: 'users',
       users,
-      currentUser: req.session,
       query: req.query
     });
   } catch (error) {
@@ -25,22 +52,11 @@ router.get('/', isAdmin, noCache, async (req, res) => {
   }
 });
 
-// Show create user form
+// Show create form
 router.get('/create', isAdmin, noCache, async (req, res) => {
   try {
     const roles = await Role.findAll();
-    res.render('users/create', {
-      title: 'Tambah User Baru',
-      subtitle: 'Form untuk menambahkan pengguna baru',
-      layout: 'layouts/dashboard',
-      breadcrumbs: [
-        { label: 'User', url: '/users' },
-        { label: 'Tambah User', url: '#' }
-      ],
-      activeMenu: 'users',
-      roles,
-      error: null
-    });
+    renderForm(res, 'create', { roles });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Terjadi kesalahan');
@@ -48,80 +64,39 @@ router.get('/create', isAdmin, noCache, async (req, res) => {
 });
 
 // Store new user
-router.post('/create', isAdmin, sanitizeInput, validateUserCreate, async (req, res) => {
+router.post('/create', isAdmin, sanitizeInput, async (req, res) => {
+  const { username, email, password, full_name, phone, address, role_id, is_active } = req.body;
+  
   try {
-    const { username, email, password, full_name, phone, address, role_id, is_active } = req.body;
-
+    const roles = await Role.findAll();
+    
     // Validasi field wajib
     if (!username || !email || !password || !full_name || !role_id) {
-      const roles = await Role.findAll();
-      return res.render('users/create', {
-        title: 'Tambah User Baru',
-        subtitle: 'Form untuk menambahkan pengguna baru',
-        layout: 'layouts/dashboard',
-        breadcrumbs: [
-          { label: 'User', url: '/users' },
-          { label: 'Tambah User', url: '#' }
-        ],
-        activeMenu: 'users',
-        roles,
-        error: 'Semua field wajib diisi'
-      });
+      return renderForm(res, 'create', { roles, error: 'Semua field wajib diisi' });
     }
-
-    // Validasi panjang password
+    
+    // Validasi email format
+    if (!validateEmail(email)) {
+      return renderForm(res, 'create', { roles, error: 'Format email tidak valid' });
+    }
+    
+    // Validasi password
     if (password.length < 6) {
-      const roles = await Role.findAll();
-      return res.render('users/create', {
-        title: 'Tambah User Baru',
-        subtitle: 'Form untuk menambahkan pengguna baru',
-        layout: 'layouts/dashboard',
-        breadcrumbs: [
-          { label: 'User', url: '/users' },
-          { label: 'Tambah User', url: '#' }
-        ],
-        activeMenu: 'users',
-        roles,
-        error: 'Password minimal 6 karakter'
-      });
+      return renderForm(res, 'create', { roles, error: 'Password minimal 6 karakter' });
     }
-
+    
     // Check username exists
     const existingUsername = await User.findByUsername(username);
     if (existingUsername) {
-      const roles = await Role.findAll();
-      return res.render('users/create', {
-        title: 'Tambah User Baru',
-        subtitle: 'Form untuk menambahkan pengguna baru',
-        layout: 'layouts/dashboard',
-        breadcrumbs: [
-          { label: 'User', url: '/users' },
-          { label: 'Tambah User', url: '#' }
-        ],
-        activeMenu: 'users',
-        roles,
-        error: 'Username sudah digunakan'
-      });
+      return renderForm(res, 'create', { roles, error: 'Username sudah digunakan' });
     }
-
+    
     // Check email exists
     const existingEmail = await User.findByEmail(email);
     if (existingEmail) {
-      const roles = await Role.findAll();
-      return res.render('users/create', {
-        title: 'Tambah User Baru',
-        subtitle: 'Form untuk menambahkan pengguna baru',
-        layout: 'layouts/dashboard',
-        breadcrumbs: [
-          { label: 'User', url: '/users' },
-          { label: 'Tambah User', url: '#' }
-        ],
-        activeMenu: 'users',
-        roles,
-        error: 'Email sudah digunakan'
-      });
+      return renderForm(res, 'create', { roles, error: 'Email sudah digunakan' });
     }
-
+    
     // Create user
     await User.create({
       username,
@@ -133,53 +108,27 @@ router.post('/create', isAdmin, sanitizeInput, validateUserCreate, async (req, r
       role_id,
       is_active: is_active === 'on'
     });
-
+    
     res.redirect('/users?success=User berhasil ditambahkan');
-
   } catch (error) {
     console.error('Error creating user:', error);
     const roles = await Role.findAll();
-    res.render('users/create', {
-      title: 'Tambah User Baru',
-      subtitle: 'Form untuk menambahkan pengguna baru',
-      layout: 'layouts/dashboard',
-      breadcrumbs: [
-        { label: 'User', url: '/users' },
-        { label: 'Tambah User', url: '#' }
-      ],
-      activeMenu: 'users',
-      roles,
-      error: 'Terjadi kesalahan saat membuat user'
-    });
+    renderForm(res, 'create', { roles, error: 'Terjadi kesalahan saat membuat user' });
   }
 });
 
-// Show edit user form
+// Show edit form
 router.get('/edit/:id', isAdmin, noCache, async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const editUser = await User.findById(id);
     const roles = await Role.findAll();
-
-    if (!user) {
+    
+    if (!editUser) {
       return res.redirect('/users?error=User tidak ditemukan');
     }
-
-    res.render('users/edit', {
-      title: 'Edit User',
-      subtitle: `Ubah data user ${user.username}`,
-      layout: 'layouts/dashboard',
-      breadcrumbs: [
-        { label: 'User', url: '/users' },
-        { label: 'Edit User', url: '#' }
-      ],
-      activeMenu: 'users',
-      user: req.session,
-      editUser: user,
-      currentUserId: req.session.userId,
-      roles,
-      error: null
-    });
+    
+    renderForm(res, 'edit', { editUser, roles });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Terjadi kesalahan');
@@ -187,120 +136,47 @@ router.get('/edit/:id', isAdmin, noCache, async (req, res) => {
 });
 
 // Update user
-router.post('/edit/:id', isAdmin, sanitizeInput, validateUserUpdate, async (req, res) => {
+router.post('/edit/:id', isAdmin, sanitizeInput, async (req, res) => {
+  const { id } = req.params;
+  const { username, email, full_name, phone, address, role_id, new_password, confirm_password, is_active } = req.body;
+  
   try {
-    const { id } = req.params;
-    const { username, email, full_name, phone, address, role_id, new_password, confirm_password, is_active } = req.body;
-
+    const editUser = await User.findById(id);
+    const roles = await Role.findAll();
+    
     // Validasi field wajib
     if (!username || !email || !full_name || !role_id) {
-      const user = await User.findById(id);
-      const roles = await Role.findAll();
-      return res.render('users/edit', {
-        title: 'Edit User',
-        subtitle: `Ubah data user ${user.username}`,
-        layout: 'layouts/dashboard',
-        breadcrumbs: [
-          { label: 'User', url: '/users' },
-          { label: 'Edit User', url: '#' }
-        ],
-        activeMenu: 'users',
-        user: req.session,
-        editUser: user,
-        currentUserId: req.session.userId,
-        roles,
-        error: 'Semua field wajib diisi'
-      });
+      return renderForm(res, 'edit', { editUser, roles, error: 'Semua field wajib diisi' });
     }
-
+    
+    // Validasi email format
+    if (!validateEmail(email)) {
+      return renderForm(res, 'edit', { editUser, roles, error: 'Format email tidak valid' });
+    }
+    
     // Check username sudah digunakan user lain
     const existingUsername = await User.findByUsername(username);
     if (existingUsername && existingUsername.id !== parseInt(id)) {
-      const user = await User.findById(id);
-      const roles = await Role.findAll();
-      return res.render('users/edit', {
-        title: 'Edit User',
-        subtitle: `Ubah data user ${user.username}`,
-        layout: 'layouts/dashboard',
-        breadcrumbs: [
-          { label: 'User', url: '/users' },
-          { label: 'Edit User', url: '#' }
-        ],
-        activeMenu: 'users',
-        user: req.session,
-        editUser: user,
-        currentUserId: req.session.userId,
-        roles,
-        error: 'Username sudah digunakan oleh user lain'
-      });
+      return renderForm(res, 'edit', { editUser, roles, error: 'Username sudah digunakan oleh user lain' });
     }
-
+    
     // Check email sudah digunakan user lain
     const existingEmail = await User.findByEmail(email);
     if (existingEmail && existingEmail.id !== parseInt(id)) {
-      const user = await User.findById(id);
-      const roles = await Role.findAll();
-      return res.render('users/edit', {
-        title: 'Edit User',
-        subtitle: `Ubah data user ${user.username}`,
-        layout: 'layouts/dashboard',
-        breadcrumbs: [
-          { label: 'User', url: '/users' },
-          { label: 'Edit User', url: '#' }
-        ],
-        activeMenu: 'users',
-        user: req.session,
-        editUser: user,
-        currentUserId: req.session.userId,
-        roles,
-        error: 'Email sudah digunakan oleh user lain'
-      });
+      return renderForm(res, 'edit', { editUser, roles, error: 'Email sudah digunakan oleh user lain' });
     }
-
+    
     // Handle password update
     if (new_password) {
       if (new_password.length < 6) {
-        const user = await User.findById(id);
-        const roles = await Role.findAll();
-        return res.render('users/edit', {
-          title: 'Edit User',
-          subtitle: `Ubah data user ${user.username}`,
-          layout: 'layouts/dashboard',
-          breadcrumbs: [
-            { label: 'User', url: '/users' },
-            { label: 'Edit User', url: '#' }
-          ],
-          activeMenu: 'users',
-          user: req.session,
-          editUser: user,
-          currentUserId: req.session.userId,
-          roles,
-          error: 'Password minimal 6 karakter'
-        });
+        return renderForm(res, 'edit', { editUser, roles, error: 'Password minimal 6 karakter' });
       }
-
       if (new_password !== confirm_password) {
-        const user = await User.findById(id);
-        const roles = await Role.findAll();
-        return res.render('users/edit', {
-          title: 'Edit User',
-          subtitle: `Ubah data user ${user.username}`,
-          layout: 'layouts/dashboard',
-          breadcrumbs: [
-            { label: 'User', url: '/users' },
-            { label: 'Edit User', url: '#' }
-          ],
-          activeMenu: 'users',
-          user: req.session,
-          editUser: user,
-          currentUserId: req.session.userId,
-          roles,
-          error: 'Password baru tidak cocok'
-        });
+        return renderForm(res, 'edit', { editUser, roles, error: 'Password baru tidak cocok' });
       }
       await User.updatePassword(id, new_password);
     }
-
+    
     // Update user data
     await User.update(id, {
       username,
@@ -311,41 +187,24 @@ router.post('/edit/:id', isAdmin, sanitizeInput, validateUserUpdate, async (req,
       role_id,
       is_active: is_active === 'on'
     });
-
+    
     res.redirect('/users?success=User berhasil diupdate');
   } catch (error) {
     console.error('Error updating user:', error);
-    res.redirect(`/users/${id}/edit?error=Gagal mengupdate user`);
+    res.redirect(`/users/edit/${id}?error=Gagal mengupdate user`);
   }
 });
 
-// Delete user
+// Delete user (POST only)
 router.post('/delete/:id', isAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-
+    
     // Prevent deleting own account
     if (parseInt(id) === req.session.userId) {
       return res.redirect('/users?error=Tidak bisa menghapus akun sendiri');
     }
-
-    await User.delete(id);
-    res.redirect('/users?success=User berhasil dihapus');
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    res.redirect('/users?error=Gagal menghapus user');
-  }
-});
-
-router.get('/delete/:id', isAdmin, async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Prevent deleting own account
-    if (parseInt(id) === req.session.userId) {
-      return res.redirect('/users?error=Tidak bisa menghapus akun sendiri');
-    }
-
+    
     await User.delete(id);
     res.redirect('/users?success=User berhasil dihapus');
   } catch (error) {
@@ -358,24 +217,22 @@ router.get('/delete/:id', isAdmin, async (req, res) => {
 router.get('/:id', isAdmin, noCache, async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
-
-    if (!user) {
+    const viewUser = await User.findById(id);
+    
+    if (!viewUser) {
       return res.redirect('/users?error=User tidak ditemukan');
     }
-
+    
     res.render('users/detail', {
       title: 'Detail User',
-      subtitle: `Informasi lengkap user ${user.username}`,
+      subtitle: `Informasi lengkap user ${viewUser.username}`,
       layout: 'layouts/dashboard',
       breadcrumbs: [
         { label: 'User', url: '/users' },
         { label: 'Detail User', url: '#' }
       ],
       activeMenu: 'users',
-      user: req.session,
-      viewUser: user,
-      currentUserId: req.session.userId
+      viewUser
     });
   } catch (error) {
     console.error('Error:', error);
