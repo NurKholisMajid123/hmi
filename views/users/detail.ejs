@@ -1,0 +1,127 @@
+
+<!-- ============================================ -->
+<!-- views/users/detail.ejs - User Detail -->
+<!-- ============================================ -->
+<section class="row">
+  <div class="col-12 col-lg-8 mx-auto">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">Detail User</h4>
+      </div>
+      <div class="card-body">
+        <div class="row mb-4">
+          <div class="col-md-3 text-center">
+            <div class="avatar avatar-xl mb-3">
+              <% if (viewUser.profile_photo) { %>
+                <img src="<%= viewUser.profile_photo %>" alt="Avatar" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+              <% } else { %>
+                <img src="/dashboard-template/dist/assets/images/faces/1.jpg" alt="Avatar" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+              <% } %>
+            </div>
+            <% 
+              let badgeClass = 'bg-secondary';
+              if (viewUser.role_level === 1) badgeClass = 'bg-danger';
+              else if (viewUser.role_level === 2) badgeClass = 'bg-primary';
+              else if (viewUser.role_level === 3) badgeClass = 'bg-info';
+              else if (viewUser.role_level === 4) badgeClass = 'bg-warning';
+              else if (viewUser.role_level === 5) badgeClass = 'bg-success';
+            %>
+            <span class="badge <%= badgeClass %>"><%= viewUser.role_name %></span>
+          </div>
+          <div class="col-md-9">
+            <table class="table table-borderless">
+              <tr>
+                <th width="200">Username</th>
+                <td>: <%= viewUser.username %></td>
+              </tr>
+              <tr>
+                <th>Nama Lengkap</th>
+                <td>: <%= viewUser.full_name %></td>
+              </tr>
+              <tr>
+                <th>Email</th>
+                <td>: <%= viewUser.email %></td>
+              </tr>
+              <tr>
+                <th>No. Telepon</th>
+                <td>: <%= viewUser.phone || '-' %></td>
+              </tr>
+              <tr>
+                <th>Alamat</th>
+                <td>: <%= viewUser.address || '-' %></td>
+              </tr>
+              <tr>
+                <th>Role</th>
+                <td>: <%= viewUser.role_name %></td>
+              </tr>
+              <tr>
+                <th>Status</th>
+                <td>: 
+                  <% if (viewUser.is_active) { %>
+                    <span class="badge bg-success">Aktif</span>
+                  <% } else { %>
+                    <span class="badge bg-secondary">Tidak Aktif</span>
+                  <% } %>
+                </td>
+              </tr>
+              <tr>
+                <th>Terdaftar Sejak</th>
+                <td>: <%= new Date(viewUser.created_at).toLocaleDateString('id-ID', { 
+                  day: 'numeric', 
+                  month: 'long', 
+                  year: 'numeric' 
+                }) %></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <a href="/users" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali
+          </a>
+          <div>
+            <a href="/users/edit/<%= viewUser.id %>" class="btn btn-warning">
+              <i class="bi bi-pencil"></i> Edit
+            </a>
+            <% if (viewUser.id !== user.userId) { %>
+            <button type="button" class="btn btn-danger" onclick="confirmDelete(<%= viewUser.id %>, '<%= viewUser.username %>')">
+              <i class="bi bi-trash"></i> Hapus
+            </button>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Konfirmasi Hapus</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah Anda yakin ingin menghapus user <strong id="deleteUsername"></strong>?</p>
+        <p class="text-danger"><small>Data yang dihapus tidak dapat dikembalikan!</small></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <form id="deleteForm" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-danger">Hapus</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function confirmDelete(userId, username) {
+  document.getElementById('deleteUsername').textContent = username;
+  document.getElementById('deleteForm').action = '/users/delete/' + userId;
+  new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/dashboard-template/dist/assets/css/bootstrap.css">
+  <link rel="stylesheet" href="/dashboard-template/dist/assets/vendors/iconly/bold.css">
+  <link rel="stylesheet" href="/dashboard-template/dist/assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
+  <link rel="stylesheet" href="/dashboard-template/dist/assets/vendors/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="/dashboard-template/dist/assets/css/app.css">
+  <link rel="shortcut icon" href="/dashboard-template/dist/assets/images/favicon.png" type="image/x-icon">
+</head>
+
+<body>
+  <div id="app">
+    <%- include('../partials/sidebar') %>
+
+    <div id="main">
+      <%- include('../partials/header') %>
+
+      <div class="page-heading">
+        <h3><%= title %></h3>
+      </div>
+
+      <div class="page-content">
+        <%- body %>
+      </div>
+
+      <%- include('../partials/footer') %>
+    </div>
+  </div>
+
+  <script src="/dashboard-template/dist/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+  <script src="/dashboard-template/dist/assets/js/bootstrap.bundle.min.js"></script>
+  <script src="/dashboard-template/dist/assets/vendors/apexcharts/apexcharts.js"></script>
+  <!-- <script src="/dashboard-template/dist/assets/js/pages/dashboard.js"></script> -->
+  <script src="/dashboard-template/dist/assets/js/main.js"></script>
+
+  <script>
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+      const searchValue = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#userTable tbody tr');
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchValue) ? '' : 'none';
+      });
+    });
+
+    // Filter by role
+    function filterByRole(roleLevel) {
+      const rows = document.querySelectorAll('#userTable tbody tr');
+
+      rows.forEach(row => {
+        if (roleLevel === 'all') {
+          row.style.display = '';
+        } else {
+          const userRole = row.getAttribute('data-role');
+          row.style.display = userRole === roleLevel ? '' : 'none';
+        }
+      });
+    }
+
+    // Delete confirmation
+    function confirmDelete(userId, username) {
+      document.getElementById('deleteUsername').textContent = username;
+      document.getElementById('deleteForm').action = '/users/delete/' + userId;
+      new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+  </script>
+</body>
+
+</html>

@@ -1,107 +1,68 @@
-# Setup Database PostgreSQL – HMI
-
-Dokumentasi ini berisi langkah-langkah setup database PostgreSQL untuk kebutuhan autentikasi pengguna dan manajemen session login aplikasi Himpunan Mahasiswa Islam.
-
----
-
-## Prasyarat
-- Sistem operasi Linux (Ubuntu direkomendasikan)
-- PostgreSQL sudah terinstall
-- Akses sudo
-
----
-
-## Masuk ke PostgreSQL
-Login sebagai user `postgres` dan buka PostgreSQL shell:
-
-```bash
-sudo -i -u postgres psql
-```
-
----
-
-## Membuat Database
-Buat database dengan nama `hmi`:
-
-```sql
-CREATE DATABASE hmi;
-```
-
-Masuk ke database `hmi`:
-
-```sql
-\c hmi
-```
-
----
-
-## Tabel Users (Autentikasi)
-Tabel ini digunakan untuk menyimpan data akun pengguna.
-
-```sql
-CREATE TABLE users (
+-- Tabel Role
+CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
+    role_name VARCHAR(50) NOT NULL UNIQUE,
+    role_level INTEGER NOT NULL CHECK (role_level BETWEEN 1 AND 5),
+    description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-```
 
----
+-- Tambahkan comment untuk dokumentasi
+COMMENT ON COLUMN roles.role_level IS 'Level hierarki: 1=Admin, 2=Ketua Umum, 3=Sekretaris/Bendahara, 4=Kabid, 5=Anggota';
 
-## Tabel Session (Login Session)
-Tabel ini digunakan untuk menyimpan session login aplikasi (misalnya untuk Node.js / Express).
+-- Tabel Users
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    address TEXT,
+    role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE RESTRICT,
+    is_active BOOLEAN DEFAULT TRUE,
+    profile_photo VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-```sql
-CREATE TABLE "session" (
-  "sid" varchar NOT NULL COLLATE "default",
-  "sess" json NOT NULL,
-  "expire" timestamp(6) NOT NULL
-)
-WITH (OIDS=FALSE);
-```
+COMMENT ON COLUMN users.password IS 'Hash password menggunakan bcrypt';
 
-Tambahkan primary key pada kolom `sid`:
+-- Function untuk auto update updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-```sql
-ALTER TABLE "session"
-ADD CONSTRAINT "session_pkey"
-PRIMARY KEY ("sid")
-NOT DEFERRABLE INITIALLY IMMEDIATE;
-```
+-- Trigger untuk auto update updated_at
+CREATE TRIGGER update_users_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
-Buat index untuk kolom `expire`:
+-- Index untuk performa
+CREATE INDEX idx_users_role ON users(role_id);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_active ON users(is_active);
+CREATE INDEX idx_users_username ON users(username);
 
-```sql
-CREATE INDEX "IDX_session_expire"
-ON "session" ("expire");
-```
+-- Insert data role default
+INSERT INTO roles (role_name, role_level, description) VALUES
+('Admin', 1, 'Administrator sistem dengan akses penuh'),
+('Ketua Umum', 2, 'Pimpinan tertinggi organisasi'),
+('Sekretaris Umum', 3, 'Bertanggung jawab atas administrasi dan kesekretariatan'),
+('Bendahara Umum', 3, 'Bertanggung jawab atas keuangan organisasi'),
+('Ketua Bidang', 4, 'Pimpinan bidang/divisi tertentu'),
+('Anggota', 5, 'Anggota organisasi');
 
----
-
-## Catatan Penting
-- Tabel `"session"` menggunakan tanda kutip karena nama tabel bersifat umum
-- Kolom `sess` bertipe `json` untuk menyimpan data session
-- Index `expire` membantu performa saat pembersihan session kadaluarsa
-- Password **wajib disimpan dalam bentuk hash** (bcrypt / argon2)
-
----
-
-## Keluar dari PostgreSQL
-Keluar dari PostgreSQL shell:
-
-```sql
-\q
-```
-
-Keluar dari user postgres:
-
-```bash
-exit
-```
-
----
-
-## Author
-Himpunan Mahasiswa Islam – Cabang Malang
+-- Contoh insert user (password: 'password123' - hash bcrypt)
+INSERT INTO users (username, email, password, full_name, role_id) VALUES
+('admin', 'admin@organisasi.com', '$2b$10$YourHashedPasswordHere', 'Administrator', 1),
+('ketua', 'ketua@organisasi.com', '$2b$10$YourHashedPasswordHere', 'Ketua Umum Organisasi', 2),
+('sekretaris', 'sekretaris@organisasi.com', '$2b$10$YourHashedPasswordHere', 'Sekretaris Umum', 3),
+('bendahara', 'bendahara@organisasi.com', '$2b$10$YourHashedPasswordHere', 'Bendahara Umum', 4),
+('kabid1', 'kabid1@organisasi.com', '$2b$10$YourHashedPasswordHere', 'Ketua Bidang Akademik', 5),
+('anggota1', 'anggota1@organisasi.com', '$2b$10$YourHashedPasswordHere', 'Anggota Biasa', 6);

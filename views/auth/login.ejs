@@ -214,14 +214,7 @@
       </div>
       <% } %>
 
-      <% if (success) { %>
-      <div class="alert alert-success" data-aos="fade-in">
-        <i class="bi bi-check-circle-fill"></i>
-        <%= success %>
-      </div>
-      <% } %>
-
-      <form action="/auth/login" method="POST">
+      <form action="/login" method="POST">
         <div class="form-floating" data-aos="fade-right">
           <input type="text" class="form-control" id="username" name="username" placeholder="Username atau Email" required>
           <label for="username"><i class="bi bi-person"></i> Username atau Email</label>
@@ -239,16 +232,6 @@
         </button>
       </form>
 
-      <div class="divider">
-        <span>atau</span>
-      </div>
-
-      <div class="auth-link">
-        <p class="mb-0">
-          Belum punya akun?
-          <a href="/auth/register"><i class="bi bi-person-plus"></i> Daftar di sini</a>
-        </p>
-      </div>
     </div>
   </div>
 

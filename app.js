@@ -14,56 +14,67 @@ app.set('views', path.join(__dirname, 'views'));
 // Setup EJS Layouts
 app.use(expressLayouts);
 app.set('layout', false); // DISABLE default layout - harus set manual per route
-app.set('layout extractScripts', true); // Extract scripts to layout
-app.set('layout extractStyles', true); // Extract styles to layout
+app.set('layout extractScripts', true);
+app.set('layout extractStyles', true);
 
 // Middleware untuk parsing body
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Middleware untuk static files (CSS, JS, images)
+// Middleware untuk static files
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Session middleware
 app.use(session({
-    store: new pgSession({
-        pool: pool,
-        tableName: 'session'
-    }),
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { 
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        secure: process.env.NODE_ENV === 'production'
-    }
+  store: new pgSession({
+    pool: pool,
+    tableName: 'session'
+  }),
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    secure: process.env.NODE_ENV === 'production', // true jika HTTPS
+    httpOnly: true
+  }
 }));
 
-// Middleware untuk membuat user tersedia di semua views
-app.use((req, res, next) => {
-    res.locals.user = req.session.user || null;
-    next();
-});
+// Import middleware
+const { setLocals, logActivity } = require('./middleware/auth');
+const { notFound, errorHandler } = require('./middleware/errorHandler');
+
+// Apply global middleware
+app.use(setLocals); // Set locals untuk semua views
+app.use(logActivity); // Log activity (opsional)
 
 // Import routes
-const indexRoutes = require('./routes/index');
+
+
 const authRoutes = require('./routes/auth');
+const dashboardRoutes = require('./routes/dashboard');
+const userRoutes = require('./routes/users');
+const profileRoutes = require('./routes/profile');
 
-// Gunakan routes
-app.use('/', indexRoutes);
-app.use('/auth', authRoutes);
-
-// 404 handler
-app.use((req, res) => {
-    res.status(404).render('404', { 
-        title: '404 - Page Not Found',
-        layout: false // Tidak menggunakan layout
-    });
+// Use routes
+app.get('/', setLocals, (req, res) => {
+  res.render('index', {
+    title: 'Landing Page',
+    layout: false
+  });
 });
+app.use('/', authRoutes); // Login/logout
+app.use('/dashboard', dashboardRoutes);
+app.use('/users', userRoutes);
+app.use('/profile', profileRoutes);
+
+// Error handlers
+app.use(notFound); // 404 handler
+app.use(errorHandler); // General error handler
 
 // Port
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });

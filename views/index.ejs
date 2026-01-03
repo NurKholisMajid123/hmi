@@ -61,16 +61,14 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <!-- Conditional Button: Bergabung atau Dashboard -->
-      <% if (user) { %>
-      <!-- Jika user sudah login -->
+      <% if (isAuthenticated) { %>
       <div class="user-menu d-flex align-items-center gap-3">
-        <span class="text-white">Halo, <%= user.username %></span>
+        <span class="text-white">Halo, <%= user.fullName %></span>
         <a class="btn-getstarted" href="/dashboard">Dashboard</a>
+        <a class="btn btn-outline-light btn-sm" href="/logout">Logout</a>
       </div>
       <% } else { %>
-      <!-- Jika user belum login -->
-      <a class="btn-getstarted" href="/auth/login">Bergabung</a>
+      <a class="btn-getstarted" href="/login">Bergabung</a>
       <% } %>
     </div>
   </header>

@@ -1,0 +1,36 @@
+<header class="mb-3">
+  <a href="#" class="burger-btn d-block d-xl-none">
+    <i class="bi bi-justify fs-3"></i>
+  </a>
+  
+  <div class="d-flex justify-content-end align-items-center">
+    <div class="dropdown">
+      <a href="#" data-bs-toggle="dropdown" class="user-dropdown d-flex align-items-center">
+        <div class="avatar avatar-md me-2">
+          <% if (user && user.profilePhoto) { %>
+            <img src="<%= user.profilePhoto %>" alt="Avatar">
+          <% } else { %>
+            <img src="/dashboard-template/dist/assets/images/faces/1.jpg" alt="Avatar">
+          <% } %>
+        </div>
+        <div class="text">
+          <h6 class="mb-0"><%= user ? user.fullName : 'User' %></h6>
+          <p class="text-muted mb-0"><%= user ? user.roleName : 'Guest' %></p>
+        </div>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <a class="dropdown-item" href="/profile">
+            <i class="bi bi-person"></i> Profil
+          </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item" href="/logout">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
