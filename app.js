@@ -54,7 +54,7 @@ app.use(logActivity); // Log activity (opsional)
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const userRoutes = require('./routes/users');
-const profileRoutes = require('./routes/profile');
+
 
 // Use routes
 app.get('/', setLocals, (req, res) => {
@@ -66,7 +66,7 @@ app.get('/', setLocals, (req, res) => {
 app.use('/', authRoutes); // Login/logout
 app.use('/dashboard', dashboardRoutes);
 app.use('/users', userRoutes);
-app.use('/profile', profileRoutes);
+
 
 // Error handlers
 app.use(notFound); // 404 handler
