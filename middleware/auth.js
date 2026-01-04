@@ -119,17 +119,17 @@ const isKetuaBidang = (req, res, next) => {
   if (!req.session || !req.session.userId) {
     return res.redirect('/login');
   }
-
+  
   // Admin dan Ketua Umum bisa akses semua
   if (req.session.roleLevel === 1 || req.session.roleLevel === 2) {
     return next();
   }
-
-  // Role level 4 adalah Ketua Bidang
-  if (req.session.roleLevel === 4) {
+  
+  // Role level 5 adalah Ketua Bidang (DIPERBAIKI dari 4 ke 5)
+  if (req.session.roleLevel === 5) {
     return next();
   }
-
+  
   res.status(403).render('errors/403', {
     title: 'Akses Ditolak',
     message: 'Halaman ini hanya dapat diakses oleh Ketua Bidang atau Admin',

@@ -10,6 +10,7 @@
         </div>
       </div>
     </div>
+
     <div class="sidebar-menu">
       <ul class="menu">
         <li class="sidebar-title">Menu</li>
@@ -33,7 +34,7 @@
         <% } %>
 
         <!-- Admin, Ketua Umum, Ketua Bidang: Manajemen Bidang -->
-        <% if (user && (user.roleLevel === 1 || user.roleLevel === 2 || user.roleLevel === 4)) { %>
+        <% if (user && (user.roleLevel === 1 || user.roleLevel === 2 || user.roleLevel === 5)) { %>
         <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'bidang' ? 'active' : '' %>">
           <a href="/bidang" class='sidebar-link'>
             <i class="bi bi-diagram-3-fill"></i>
@@ -42,8 +43,16 @@
         </li>
         <% } %>
 
+        <!-- Program Kerja - Semua role bisa akses -->
+        <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'proker' ? 'active' : '' %>">
+          <a href="/proker" class='sidebar-link'>
+            <i class="bi bi-card-checklist"></i>
+            <span>Program Kerja</span>
+          </a>
+        </li>
+
         <!-- Ketua Bidang dan Anggota: Bidang Saya -->
-        <% if (user && user.roleLevel >= 4) { %>
+        <% if (user && user.roleLevel >= 5) { %>
         <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'bidang-saya' ? 'active' : '' %>">
           <a href="/my-bidang" class='sidebar-link'>
             <i class="bi bi-bookmark-fill"></i>
@@ -87,6 +96,7 @@
         </li>
       </ul>
     </div>
+
     <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
   </div>
 </div>

@@ -1,0 +1,334 @@
+<!-- Alert Messages -->
+<% if (typeof query !== 'undefined' && query.success) { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <i class="bi bi-check-circle"></i> <%= query.success %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<% if (typeof query !== 'undefined' && query.error) { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class="bi bi-exclamation-triangle"></i> <%= query.error %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<!-- Filter Section -->
+<section class="section">
+  <div class="card mb-3">
+    <div class="card-body">
+      <form method="GET" action="/proker" class="row g-3">
+        <div class="col-md-4">
+          <label for="kategori_id" class="form-label">
+            <i class="bi bi-tag"></i> Filter by Kategori
+          </label>
+          <select class="form-select" id="kategori_id" name="kategori_id" onchange="this.form.submit()">
+            <option value="">Semua Kategori</option>
+            <% if (typeof kategoriList !== 'undefined' && kategoriList) { %>
+            <% kategoriList.forEach(kategori => { %>
+            <option value="<%= kategori.id %>" <%= query.kategori_id == kategori.id ? 'selected' : '' %>>
+              <%= kategori.nama_kategori %>
+            </option>
+            <% }); %>
+            <% } %>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label for="status" class="form-label">
+            <i class="bi bi-flag"></i> Filter by Status
+          </label>
+          <select class="form-select" id="status" name="status" onchange="this.form.submit()">
+            <option value="">Semua Status</option>
+            <option value="draft" <%= query.status === 'draft' ? 'selected' : '' %>>Draft</option>
+            <option value="diajukan" <%= query.status === 'diajukan' ? 'selected' : '' %>>Diajukan</option>
+            <option value="disetujui" <%= query.status === 'disetujui' ? 'selected' : '' %>>Disetujui</option>
+            <option value="ditolak" <%= query.status === 'ditolak' ? 'selected' : '' %>>Ditolak</option>
+            <option value="selesai" <%= query.status === 'selesai' ? 'selected' : '' %>>Selesai</option>
+            <option value="dibatalkan" <%= query.status === 'dibatalkan' ? 'selected' : '' %>>Dibatalkan</option>
+          </select>
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end gap-2">
+          <a href="/proker" class="btn btn-secondary flex-grow-1">
+            <i class="bi bi-x-circle"></i> Reset Filter
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Program Kerja Table Section -->
+<section class="section">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="card-title mb-1">Data Program Kerja</h4>
+              <% if (query.kategori_id && typeof kategoriList !== 'undefined') { %>
+              <% const selectedKategori = kategoriList.find(k => k.id == query.kategori_id); %>
+              <% if (selectedKategori) { %>
+              <small class="text-muted">
+                <i class="bi bi-funnel"></i> Filter: <%= selectedKategori.nama_kategori %>
+              </small>
+              <% } %>
+              <% } %>
+              <% if (query.status) { %>
+              <small class="text-muted">
+                <i class="bi bi-funnel"></i> Status: <%= query.status %>
+              </small>
+              <% } %>
+            </div>
+            <a href="/proker/create" class="btn btn-primary">
+              <i class="bi bi-plus-circle"></i> Tambah Program Kerja
+            </a>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="card-body">
+            <!-- Search Row -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-search"></i></span>
+                  <input type="text" class="form-control" id="searchInput" placeholder="Cari judul, kategori, pengusul...">
+                </div>
+              </div>
+              <div class="col-md-6 text-end">
+                <span class="text-muted">
+                  Total: <strong id="totalProker"><%= prokerList ? prokerList.length : 0 %></strong> program kerja
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table with outer spacing -->
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="prokerTable">
+              <thead>
+                <tr>
+                  <th>NO</th>
+                  <th>JUDUL</th>
+                  <th>KATEGORI</th>
+                  <th>BIDANG</th>
+                  <th>PENGUSUL</th>
+                  <th>TANGGAL</th>
+                  <th>ANGGARAN</th>
+                  <th>STATUS</th>
+                  <th>AKSI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (prokerList && prokerList.length > 0) { %>
+                <% prokerList.forEach((proker, index) => { %>
+                <tr>
+                  <td class="text-bold-500"><%= index + 1 %></td>
+                  <td>
+                    <strong><%= proker.judul %></strong>
+                    <% if (proker.deskripsi) { %>
+                    <br><small class="text-muted"><%= proker.deskripsi.substring(0, 50) %>...</small>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% 
+                      let kategoriBadge = 'bg-secondary';
+                      if (proker.nama_kategori === 'Bidang') kategoriBadge = 'bg-success';
+                      else if (proker.nama_kategori === 'Sekretaris') kategoriBadge = 'bg-info';
+                      else if (proker.nama_kategori === 'Bendahara') kategoriBadge = 'bg-warning';
+                    %>
+                    <span class="badge <%= kategoriBadge %>"><%= proker.nama_kategori %></span>
+                  </td>
+                  <td>
+                    <% if (proker.nama_bidang) { %>
+                    <span class="badge bg-primary"><%= proker.nama_bidang %></span>
+                    <% } else { %>
+                    <span class="text-muted">-</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <small><%= proker.pengusul_name %></small>
+                  </td>
+                  <td>
+                    <% if (proker.tanggal_mulai) { %>
+                    <small>
+                      <%= new Date(proker.tanggal_mulai).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) %>
+                    </small>
+                    <% } else { %>
+                    <span class="text-muted">-</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <small>Rp <%= Number(proker.anggaran).toLocaleString('id-ID') %></small>
+                  </td>
+                  <td>
+                    <% 
+                      let statusBadge = 'bg-secondary';
+                      if (proker.status === 'draft') statusBadge = 'bg-secondary';
+                      else if (proker.status === 'diajukan') statusBadge = 'bg-info';
+                      else if (proker.status === 'disetujui') statusBadge = 'bg-success';
+                      else if (proker.status === 'ditolak') statusBadge = 'bg-danger';
+                      else if (proker.status === 'selesai') statusBadge = 'bg-dark';
+                      else if (proker.status === 'dibatalkan') statusBadge = 'bg-warning';
+                    %>
+                    <span class="badge <%= statusBadge %>">
+                      <%= proker.status.charAt(0).toUpperCase() + proker.status.slice(1) %>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <a href="/proker/<%= proker.id %>" class="btn btn-sm btn-info" title="Detail">
+                        <i class="bi bi-eye"></i>
+                      </a>
+                      <% if (user && (user.roleLevel <= 2 || proker.pengusul_id === user.userId)) { %>
+                      <a href="/proker/edit/<%= proker.id %>" class="btn btn-sm btn-warning" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(<%= proker.id %>, '<%= proker.judul %>')" title="Hapus">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+                <% }); %>
+                <% } else { %>
+                <tr>
+                  <td colspan="9" class="text-center text-muted py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-2">
+                      <% if (query.kategori_id || query.status) { %>
+                      Tidak ada program kerja dengan filter yang dipilih
+                      <% } else { %>
+                      Belum ada program kerja
+                      <% } %>
+                    </p>
+                    <% if (query.kategori_id || query.status) { %>
+                    <a href="/proker" class="btn btn-sm btn-primary mt-2">Reset Filter</a>
+                    <% } %>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade text-left" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title white" id="deleteModalLabel">
+          <i class="bi bi-exclamation-triangle"></i> Konfirmasi Hapus
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <i data-feather="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah Anda yakin ingin menghapus program kerja <strong id="deleteProkerTitle" class="text-danger"></strong>?</p>
+        <div class="alert alert-light-warning color-warning">
+          <i class="bi bi-info-circle"></i> <strong>Perhatian!</strong> Data yang dihapus tidak dapat dikembalikan!
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+          <i class="bx bx-x d-block d-sm-none"></i>
+          <span class="d-none d-sm-block">Batal</span>
+        </button>
+        <form id="deleteForm" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-danger ml-1">
+            <i class="bx bx-check d-block d-sm-none"></i>
+            <span class="d-none d-sm-block">Hapus</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Search functionality
+  const searchInput = document.getElementById('searchInput');
+  const prokerTable = document.getElementById('prokerTable');
+  const totalProkerSpan = document.getElementById('totalProker');
+
+  if (searchInput) {
+    searchInput.addEventListener('keyup', function() {
+      const searchValue = this.value.toLowerCase();
+      const rows = prokerTable.querySelectorAll('tbody tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        if (row.children.length === 1 && row.children[0].colSpan > 1) {
+          return;
+        }
+
+        const text = row.textContent.toLowerCase();
+        const isVisible = text.includes(searchValue);
+        row.style.display = isVisible ? '' : 'none';
+
+        if (isVisible) visibleCount++;
+      });
+
+      totalProkerSpan.textContent = visibleCount;
+    });
+  }
+
+  // Delete confirmation
+  function confirmDelete(prokerId, prokerTitle) {
+    document.getElementById('deleteProkerTitle').textContent = prokerTitle;
+    document.getElementById('deleteForm').action = '/proker/delete/' + prokerId;
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+  }
+
+  // Auto dismiss alerts after 5 seconds
+  setTimeout(function() {
+    const alerts = document.querySelectorAll('.alert-dismissible');
+    alerts.forEach(alert => {
+      const bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    });
+  }, 5000);
+
+  // Highlight current filter
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasFilter = urlParams.get('kategori_id') || urlParams.get('status');
+
+    if (hasFilter) {
+      const filterCard = document.querySelector('.card.mb-3');
+      if (filterCard) {
+        filterCard.classList.add('border-primary');
+      }
+    }
+  });
+</script>
+
+<style>
+  .card.border-primary {
+    border-width: 2px !important;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+  }
+
+  .table td {
+    vertical-align: middle;
+  }
+
+  .btn-group .btn {
+    margin: 0 2px;
+  }
+</style>

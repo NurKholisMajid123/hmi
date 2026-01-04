@@ -66,3 +66,73 @@ INSERT INTO users (username, email, password, full_name, role_id) VALUES
 ('bendahara', 'bendahara@organisasi.com', '$2b$10$YourHashedPasswordHere', 'Bendahara Umum', 4),
 ('kabid1', 'kabid1@organisasi.com', '$2b$10$YourHashedPasswordHere', 'Ketua Bidang Akademik', 5),
 ('anggota1', 'anggota1@organisasi.com', '$2b$10$YourHashedPasswordHere', 'Anggota Biasa', 6);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Tabel kategori program kerja
+CREATE TABLE kategori_proker (
+  id SERIAL PRIMARY KEY,
+  nama_kategori VARCHAR(50) NOT NULL UNIQUE,
+  deskripsi TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert kategori default
+INSERT INTO kategori_proker (nama_kategori, deskripsi) VALUES
+('Bidang', 'Program kerja bidang organisasi'),
+('Sekretaris', 'Program kerja sekretaris'),
+('Bendahara', 'Program kerja bendahara');
+
+-- Tabel program kerja
+CREATE TABLE program_kerja (
+  id SERIAL PRIMARY KEY,
+  judul VARCHAR(255) NOT NULL,
+  deskripsi TEXT,
+  kategori_id INTEGER NOT NULL REFERENCES kategori_proker(id) ON DELETE RESTRICT,
+  bidang_id INTEGER REFERENCES bidang(id) ON DELETE CASCADE,
+  tanggal_mulai DATE,
+  tanggal_selesai DATE,
+  anggaran DECIMAL(15,2) DEFAULT 0,
+  penanggung_jawab_id INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  pengusul_id INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'diajukan', 'disetujui', 'ditolak', 'selesai', 'dibatalkan')),
+  catatan_approval TEXT,
+  approved_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  approved_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index untuk performa
+CREATE INDEX idx_proker_kategori ON program_kerja(kategori_id);
+CREATE INDEX idx_proker_bidang ON program_kerja(bidang_id);
+CREATE INDEX idx_proker_status ON program_kerja(status);
+CREATE INDEX idx_proker_pengusul ON program_kerja(pengusul_id);
+CREATE INDEX idx_proker_penanggung_jawab ON program_kerja(penanggung_jawab_id);
+
+-- Tabel riwayat perubahan status
+CREATE TABLE proker_history (
+  id SERIAL PRIMARY KEY,
+  proker_id INTEGER NOT NULL REFERENCES program_kerja(id) ON DELETE CASCADE,
+  status_lama VARCHAR(20),
+  status_baru VARCHAR(20),
+  catatan TEXT,
+  changed_by INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_proker_history_proker ON proker_history(proker_id);

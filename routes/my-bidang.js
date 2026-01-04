@@ -28,10 +28,8 @@ router.get('/:id', isAuthenticated, noCache, async (req, res) => {
         const { id } = req.params;
         const userId = req.session.userId;
         const roleLevel = req.session.roleLevel;
-        
-        // Get bidang data
+
         const bidang = await Bidang.findById(id);
-        
         if (!bidang) {
             return res.status(404).render('errors/404', {
                 title: 'Tidak Ditemukan',
@@ -40,20 +38,15 @@ router.get('/:id', isAuthenticated, noCache, async (req, res) => {
                 layout: 'layouts/dashboard'
             });
         }
-        
-        // Admin dan Ketua Umum bisa akses semua
+
         const isAdminOrKetuaUmum = roleLevel === 1 || roleLevel === 2;
         
-        // Cek apakah user adalah ketua bidang ini
-        const isKetuaBidang = bidang.ketua_bidang_id === userId;
+        // Cek apakah user adalah ketua bidang ini (roleLevel 5) - DIPERBAIKI
+        const isKetuaBidang = roleLevel === 5 && bidang.ketua_bidang_id == userId;
         
-        // Cek apakah user adalah anggota bidang ini
-        const isAnggota = await Bidang.isAnggotaOf(userId, id);
-        
-        // ✅ FIXED: Izinkan akses jika user adalah:
-        // 1. Admin/Ketua Umum, atau
-        // 2. Ketua Bidang ini, atau
-        // 3. Anggota bidang ini
+        // Cek apakah user adalah anggota bidang ini (roleLevel 6)
+        const isAnggota = roleLevel === 6 && await Bidang.isAnggotaOf(userId, id);
+
         if (!isAdminOrKetuaUmum && !isKetuaBidang && !isAnggota) {
             return res.status(403).render('errors/403', {
                 title: 'Akses Ditolak',
@@ -62,7 +55,7 @@ router.get('/:id', isAuthenticated, noCache, async (req, res) => {
                 layout: 'layouts/dashboard'
             });
         }
-        
+
         const anggota = await Bidang.getAnggota(id);
         
         res.render('my-bidang/detail', {
@@ -72,7 +65,7 @@ router.get('/:id', isAuthenticated, noCache, async (req, res) => {
             activeMenu: 'bidang-saya',
             bidang,
             anggota,
-            isKetuaBidang  // Pass ini ke view untuk conditional rendering
+            isKetuaBidang
         });
     } catch (error) {
         console.error('Error:', error);

@@ -1,0 +1,169 @@
+<section class="row">
+  <div class="col-12 col-lg-10 mx-auto">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">Edit Program Kerja</h4>
+      </div>
+      <div class="card-body">
+        <% if (error) { %>
+        <div class="alert alert-danger alert-dismissible fade show">
+          <i class="bi bi-exclamation-triangle"></i> <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+
+        <form action="/proker/edit/<%= proker.id %>" method="POST">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="form-group mb-3">
+                <label for="judul" class="form-label">Judul Program Kerja <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="judul" name="judul" value="<%= proker.judul %>" required>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group mb-3">
+                <label for="kategori_id" class="form-label">Kategori <span class="text-danger">*</span></label>
+                <select class="form-select" id="kategori_id" name="kategori_id" required onchange="toggleBidangField()">
+                  <option value="">Pilih Kategori</option>
+                  <% if (typeof kategoriList !== 'undefined' && kategoriList) { %>
+                  <% kategoriList.forEach(kategori => { %>
+                  <option value="<%= kategori.id %>" <%= kategori.id === proker.kategori_id ? 'selected' : '' %>>
+                    <%= kategori.nama_kategori %>
+                  </option>
+                  <% }); %>
+                  <% } %>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="deskripsi" class="form-label">Deskripsi</label>
+            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4"><%= proker.deskripsi || '' %></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6" id="bidangField">
+              <div class="form-group mb-3">
+                <label for="bidang_id" class="form-label">Bidang</label>
+                <select class="form-select" id="bidang_id" name="bidang_id">
+                  <option value="">Pilih Bidang</option>
+                  <% if (typeof bidangList !== 'undefined' && bidangList) { %>
+                  <% bidangList.forEach(bidang => { %>
+                  <option value="<%= bidang.id %>" <%= bidang.id === proker.bidang_id ? 'selected' : '' %>>
+                    <%= bidang.nama_bidang %>
+                  </option>
+                  <% }); %>
+                  <% } %>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="penanggung_jawab_id" class="form-label">Penanggung Jawab <span class="text-danger">*</span></label>
+                <select class="form-select" id="penanggung_jawab_id" name="penanggung_jawab_id" required>
+                  <option value="">Pilih Penanggung Jawab</option>
+                  <% if (typeof users !== 'undefined' && users) { %>
+                  <% users.forEach(user => { %>
+                  <option value="<%= user.id %>" <%= user.id === proker.penanggung_jawab_id ? 'selected' : '' %>>
+                    <%= user.full_name %> - <%= user.role_name %>
+                  </option>
+                  <% }); %>
+                  <% } %>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
+                <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" value="<%= proker.tanggal_mulai ? new Date(proker.tanggal_mulai).toISOString().split('T')[0] : '' %>">
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="tanggal_selesai" class="form-label">Tanggal Selesai</label>
+                <input type="date" class="form-control" id="tanggal_selesai" name="tanggal_selesai" value="<%= proker.tanggal_selesai ? new Date(proker.tanggal_selesai).toISOString().split('T')[0] : '' %>">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="anggaran" class="form-label">Anggaran (Rp)</label>
+                <input type="number" class="form-control" id="anggaran" name="anggaran" min="0" value="<%= proker.anggaran || 0 %>">
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                <select class="form-select" id="status" name="status" required>
+                  <option value="draft" <%= proker.status === 'draft' ? 'selected' : '' %>>Draft</option>
+                  <option value="diajukan" <%= proker.status === 'diajukan' ? 'selected' : '' %>>Diajukan</option>
+                  <option value="disetujui" <%= proker.status === 'disetujui' ? 'selected' : '' %>>Disetujui</option>
+                  <option value="ditolak" <%= proker.status === 'ditolak' ? 'selected' : '' %>>Ditolak</option>
+                  <option value="selesai" <%= proker.status === 'selesai' ? 'selected' : '' %>>Selesai</option>
+                  <option value="dibatalkan" <%= proker.status === 'dibatalkan' ? 'selected' : '' %>>Dibatalkan</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="d-flex justify-content-between">
+            <a href="/proker" class="btn btn-secondary">
+              <i class="bi bi-arrow-left"></i> Kembali
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-save"></i> Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Toggle bidang field based on kategori
+  function toggleBidangField() {
+    const kategoriSelect = document.getElementById('kategori_id');
+    const bidangField = document.getElementById('bidangField');
+    const selectedKategori = kategoriSelect.options[kategoriSelect.selectedIndex].text;
+
+    if (selectedKategori === 'Bidang') {
+      bidangField.style.display = 'block';
+      document.getElementById('bidang_id').required = true;
+    } else {
+      bidangField.style.display = 'none';
+      document.getElementById('bidang_id').required = false;
+      document.getElementById('bidang_id').value = '';
+    }
+  }
+
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    toggleBidangField();
+
+    // Validate date range
+    const tanggalMulai = document.getElementById('tanggal_mulai');
+    const tanggalSelesai = document.getElementById('tanggal_selesai');
+
+    tanggalSelesai.addEventListener('change', function() {
+      if (tanggalMulai.value && tanggalSelesai.value) {
+        if (new Date(tanggalSelesai.value) < new Date(tanggalMulai.value)) {
+          alert('Tanggal selesai tidak boleh lebih awal dari tanggal mulai');
+          tanggalSelesai.value = '';
+        }
+      }
+    });
+  });
+</script>

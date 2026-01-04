@@ -17,8 +17,8 @@ const isKetuaOfBidang = async (req, res, next) => {
             return next();
         }
 
-        // Untuk Ketua Bidang (roleLevel 4)
-        if (roleLevel === 4) {
+        // Untuk Ketua Bidang (roleLevel 5) - DIPERBAIKI dari 4 ke 5
+        if (roleLevel === 5) {
             const bidang = await Bidang.findById(bidangId);
 
             if (!bidang) {
@@ -30,7 +30,7 @@ const isKetuaOfBidang = async (req, res, next) => {
                 });
             }
 
-            // Gunakan loose comparison (==) untuk handle type mismatch antara string dan number
+            // Gunakan loose comparison (==) untuk handle type mismatch
             if (bidang.ketua_bidang_id == userId) {
                 return next();
             }

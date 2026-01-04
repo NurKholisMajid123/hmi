@@ -1,39 +1,83 @@
+<!-- Alert Messages -->
+<% if (typeof query !== 'undefined' && query.success) { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <i class="bi bi-check-circle"></i> <%= query.success %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<% if (typeof query !== 'undefined' && query.error) { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class="bi bi-exclamation-triangle"></i> <%= query.error %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
 <section class="section">
   <div class="row">
-    <!-- Info Bidang -->
-    <div class="col-md-4">
-      <div class="card">
+
+    <!-- Info Bidang - Sidebar -->
+    <div class="col-md-4 mb-4">
+      <div class="card sticky-top" style="top: 20px;">
         <div class="card-header bg-primary text-white">
-          <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informasi Bidang</h5>
+          <h5 class="mb-0">
+            <i class="bi bi-info-circle"></i> Informasi Bidang
+          </h5>
         </div>
         <div class="card-body">
-          <h4 class="mb-3"><%= bidang.nama_bidang %></h4>
+          <!-- Bidang Name -->
+          <div class="text-center mb-4">
+            <div class="avatar avatar-xl bg-light-primary mb-3 mx-auto">
+              <span class="avatar-content">
+                <i class="bi bi-diagram-3-fill fs-2 text-primary"></i>
+              </span>
+            </div>
+            <h4 class="mb-2"><%= bidang.nama_bidang %></h4>
+          </div>
 
-          <div class="mb-3">
-            <label class="text-muted small">Ketua Bidang:</label>
+          <hr>
+
+          <!-- Ketua Bidang -->
+          <div class="mb-4">
+            <label class="text-muted small mb-2">
+              <i class="bi bi-person-badge"></i> Ketua Bidang:
+            </label>
             <% if (bidang.ketua_name) { %>
-            <div class="d-flex align-items-center">
-              <div class="avatar avatar-sm bg-light-primary me-2">
-                <span class="avatar-content"><%= bidang.ketua_name.charAt(0) %></span>
+            <div class="d-flex align-items-center p-2 bg-light rounded">
+              <div class="avatar avatar-md bg-light-warning me-2">
+                <span class="avatar-content">
+                  <%= bidang.ketua_name.charAt(0).toUpperCase() %>
+                </span>
               </div>
               <div>
                 <strong><%= bidang.ketua_name %></strong><br>
-                <small class="text-muted"><%= bidang.ketua_email %></small>
+                <small class="text-muted">
+                  <i class="bi bi-envelope"></i> <%= bidang.ketua_email %>
+                </small>
               </div>
             </div>
             <% } else { %>
-            <span class="badge bg-light-secondary">Belum ada ketua</span>
+            <span class="badge bg-secondary">Belum ada ketua</span>
             <% } %>
           </div>
 
-          <div class="mb-3">
-            <label class="text-muted small">Deskripsi:</label>
-            <p><%= bidang.deskripsi || 'Tidak ada deskripsi' %></p>
+          <!-- Description -->
+          <div class="mb-4">
+            <label class="text-muted small mb-2">
+              <i class="bi bi-card-text"></i> Deskripsi:
+            </label>
+            <p class="mb-0"><%= bidang.deskripsi || 'Tidak ada deskripsi' %></p>
           </div>
 
+          <!-- Total Anggota -->
           <div class="mb-0">
-            <label class="text-muted small">Total Anggota:</label>
-            <h3 class="mb-0"><span class="badge bg-primary"><%= anggota.length %> orang</span></h3>
+            <label class="text-muted small mb-2">
+              <i class="bi bi-people"></i> Total Anggota:
+            </label>
+            <div class="d-flex align-items-center justify-content-between p-3 bg-light-primary rounded">
+              <span class="fs-5">Anggota Aktif</span>
+              <span class="badge bg-primary fs-5"><%= anggota.length %> orang</span>
+            </div>
           </div>
         </div>
         <div class="card-footer">
@@ -44,49 +88,164 @@
       </div>
     </div>
 
-    <!-- Daftar Anggota -->
+    <!-- Daftar Anggota - Main Content -->
     <div class="col-md-8">
       <div class="card">
         <div class="card-header">
-          <h5 class="mb-0"><i class="bi bi-people-fill"></i> Anggota Bidang</h5>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="card-title mb-1">
+                <i class="bi bi-people-fill"></i> Daftar Anggota
+              </h4>
+              <small class="text-muted">Menampilkan semua anggota bidang <%= bidang.nama_bidang %></small>
+            </div>
+          </div>
         </div>
+
         <div class="card-body">
           <% if (anggota && anggota.length > 0) { %>
-          <div class="row">
+
+          <!-- Search Box -->
+          <div class="row mb-3">
+            <div class="col-md-8">
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-search"></i>
+                </span>
+                <input type="text" class="form-control" id="searchAnggota" placeholder="Cari nama atau email anggota...">
+              </div>
+            </div>
+            <div class="col-md-4 text-end">
+              <span class="text-muted">
+                Total: <strong id="totalAnggota"><%= anggota.length %></strong> anggota
+              </span>
+            </div>
+          </div>
+
+          <!-- Anggota Grid -->
+          <div class="row" id="anggotaList">
             <% anggota.forEach(member => { %>
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center p-3 border rounded">
-                <div class="avatar avatar-lg bg-light-primary me-3">
-                  <span class="avatar-content fs-5">
-                    <%= member.full_name.charAt(0).toUpperCase() %>
-                  </span>
-                </div>
-                <div>
-                  <h6 class="mb-0"><%= member.full_name %></h6>
-                  <small class="text-muted"><%= member.email %></small><br>
-                  <small class="text-muted">@<%= member.username %></small>
-                  <% if (member.is_active) { %>
-                  <span class="badge bg-success ms-2">
-                    <i class="bi bi-check-circle"></i> Aktif
-                  </span>
-                  <% } else { %>
-                  <span class="badge bg-secondary ms-2">
-                    <i class="bi bi-x-circle"></i> Nonaktif
-                  </span>
-                  <% } %>
+            <div class="col-md-6 mb-3 anggota-item">
+              <div class="card shadow-sm h-100">
+                <div class="card-body">
+                  <div class="d-flex align-items-center">
+                    <div class="avatar avatar-lg bg-light-primary me-3">
+                      <% if (member.profile_photo) { %>
+                      <img src="<%= member.profile_photo %>" alt="Avatar">
+                      <% } else { %>
+                      <span class="avatar-content fs-4">
+                        <%= member.full_name.charAt(0).toUpperCase() %>
+                      </span>
+                      <% } %>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1"><%= member.full_name %></h6>
+                      <small class="text-muted d-block">
+                        <i class="bi bi-envelope"></i> <%= member.email %>
+                      </small>
+                      <small class="text-muted d-block">
+                        <i class="bi bi-person"></i> @<%= member.username %>
+                      </small>
+                      <div class="mt-2">
+                        <span class="badge bg-info"><%= member.role_name %></span>
+                        <% if (member.is_active) { %>
+                        <span class="badge bg-success">
+                          <i class="bi bi-check-circle"></i> Aktif
+                        </span>
+                        <% } else { %>
+                        <span class="badge bg-secondary">
+                          <i class="bi bi-x-circle"></i> Nonaktif
+                        </span>
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             <% }); %>
           </div>
+
           <% } else { %>
+
+          <!-- Empty State -->
           <div class="text-center py-5">
             <i class="bi bi-inbox" style="font-size: 4rem; color: #ddd;"></i>
-            <p class="text-muted mt-3">Belum ada anggota di bidang ini</p>
+            <h5 class="mt-3 mb-2">Belum Ada Anggota</h5>
+            <p class="text-muted">Bidang ini belum memiliki anggota</p>
+            <% if (isKetuaBidang) { %>
+            <div class="alert alert-light-info mx-auto mt-3" style="max-width: 400px;">
+              <i class="bi bi-info-circle"></i>
+              Sebagai Ketua Bidang, Anda dapat menambahkan anggota melalui menu Manajemen Bidang
+            </div>
+            <% } %>
           </div>
+
           <% } %>
         </div>
       </div>
     </div>
+
   </div>
 </section>
+
+<script>
+  // Search functionality
+  const searchInput = document.getElementById('searchAnggota');
+  const anggotaList = document.getElementById('anggotaList');
+  const totalAnggotaSpan = document.getElementById('totalAnggota');
+
+  if (searchInput && anggotaList) {
+    searchInput.addEventListener('keyup', function() {
+      const searchValue = this.value.toLowerCase();
+      const items = anggotaList.querySelectorAll('.anggota-item');
+      let visibleCount = 0;
+
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        const isVisible = text.includes(searchValue);
+        item.style.display = isVisible ? '' : 'none';
+
+        if (isVisible) visibleCount++;
+      });
+
+      if (totalAnggotaSpan) {
+        totalAnggotaSpan.textContent = visibleCount;
+      }
+    });
+  }
+
+  // Auto dismiss alerts after 5 seconds
+  setTimeout(function() {
+    const alerts = document.querySelectorAll('.alert-dismissible');
+    alerts.forEach(alert => {
+      const bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    });
+  }, 5000);
+</script>
+
+<style>
+  .card.shadow-sm {
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .card.shadow-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .avatar-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-weight: bold;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+  }
+</style>

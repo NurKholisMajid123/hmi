@@ -148,13 +148,14 @@
                   <td><%= user.email %></td>
                   <td>
                     <% 
-                        let badgeClass = 'bg-secondary';
-                        if (user.role_level === 1) badgeClass = 'bg-danger';
-                        else if (user.role_level === 2) badgeClass = 'bg-primary';
-                        else if (user.role_level === 3) badgeClass = 'bg-info';
-                        else if (user.role_level === 4) badgeClass = 'bg-warning';
-                        else if (user.role_level === 5 || user.role_level === 6) badgeClass = 'bg-success';
-                      %>
+                      let badgeClass = 'bg-secondary';
+                      if (user.role_level === 1) badgeClass = 'bg-danger';
+                      else if (user.role_level === 2) badgeClass = 'bg-primary';
+                      else if (user.role_level === 3) badgeClass = 'bg-info';
+                      else if (user.role_level === 4) badgeClass = 'bg-warning';
+                      else if (user.role_level === 5) badgeClass = 'bg-success';    // Ketua Bidang
+                      else if (user.role_level === 6) badgeClass = 'bg-secondary';  // Anggota
+                    %>
                     <span class="badge <%= badgeClass %>"><%= user.role_name %></span>
                   </td>
                   <td>

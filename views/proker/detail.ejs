@@ -1,0 +1,299 @@
+<!-- Alert Messages -->
+<% if (typeof query !== 'undefined' && query.success) { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <i class="bi bi-check-circle"></i> <%= query.success %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<% if (typeof query !== 'undefined' && query.error) { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class="bi bi-exclamation-triangle"></i> <%= query.error %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<section class="section">
+  <div class="row">
+    <div class="col-12 col-lg-10 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title">Detail Program Kerja</h4>
+            <% 
+              let statusBadge = 'bg-secondary';
+              if (proker.status === 'draft') statusBadge = 'bg-secondary';
+              else if (proker.status === 'diajukan') statusBadge = 'bg-info';
+              else if (proker.status === 'disetujui') statusBadge = 'bg-success';
+              else if (proker.status === 'ditolak') statusBadge = 'bg-danger';
+              else if (proker.status === 'selesai') statusBadge = 'bg-dark';
+              else if (proker.status === 'dibatalkan') statusBadge = 'bg-warning';
+            %>
+            <span class="badge <%= statusBadge %> fs-6">
+              <%= proker.status.charAt(0).toUpperCase() + proker.status.slice(1) %>
+            </span>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- Informasi Utama -->
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <h3 class="mb-3"><%= proker.judul %></h3>
+
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <th width="250">Kategori</th>
+                    <td>
+                      <% 
+                        let kategoriBadge = 'bg-secondary';
+                        if (proker.nama_kategori === 'Bidang') kategoriBadge = 'bg-success';
+                        else if (proker.nama_kategori === 'Sekretaris') kategoriBadge = 'bg-info';
+                        else if (proker.nama_kategori === 'Bendahara') kategoriBadge = 'bg-warning';
+                      %>
+                      <span class="badge <%= kategoriBadge %>"><%= proker.nama_kategori %></span>
+                    </td>
+                  </tr>
+                  <% if (proker.nama_bidang) { %>
+                  <tr>
+                    <th>Bidang</th>
+                    <td><span class="badge bg-primary"><%= proker.nama_bidang %></span></td>
+                  </tr>
+                  <% } %>
+                  <tr>
+                    <th>Deskripsi</th>
+                    <td><%= proker.deskripsi || '-' %></td>
+                  </tr>
+                  <tr>
+                    <th>Pengusul</th>
+                    <td>
+                      <i class="bi bi-person"></i> <%= proker.pengusul_name %>
+                      <br><small class="text-muted"><%= proker.pengusul_email %></small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Penanggung Jawab</th>
+                    <td>
+                      <i class="bi bi-person-badge"></i> <%= proker.penanggung_jawab_name %>
+                      <br><small class="text-muted"><%= proker.penanggung_jawab_email %></small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Tanggal Mulai</th>
+                    <td>
+                      <% if (proker.tanggal_mulai) { %>
+                      <i class="bi bi-calendar-event"></i>
+                      <%= new Date(proker.tanggal_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                      <% } else { %>
+                      <span class="text-muted">Belum ditentukan</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Tanggal Selesai</th>
+                    <td>
+                      <% if (proker.tanggal_selesai) { %>
+                      <i class="bi bi-calendar-check"></i>
+                      <%= new Date(proker.tanggal_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                      <% } else { %>
+                      <span class="text-muted">Belum ditentukan</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Anggaran</th>
+                    <td>
+                      <i class="bi bi-cash-stack"></i>
+                      <strong>Rp <%= Number(proker.anggaran).toLocaleString('id-ID') %></strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Dibuat Pada</th>
+                    <td>
+                      <i class="bi bi-clock"></i>
+                      <%= new Date(proker.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Approval Section (Hanya untuk Admin/Ketua Umum dan status diajukan) -->
+          <% if (user && (user.roleLevel === 1 || user.roleLevel === 2) && proker.status === 'diajukan') { %>
+          <hr class="my-4">
+          <div class="row">
+            <div class="col-12">
+              <h5 class="mb-3"><i class="bi bi-check-square"></i> Approval Program Kerja</h5>
+              <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Program kerja ini menunggu persetujuan Anda
+              </div>
+
+              <form action="/proker/<%= proker.id %>/approve" method="POST">
+                <div class="form-group mb-3">
+                  <label for="catatan" class="form-label">Catatan (Opsional)</label>
+                  <textarea class="form-control" id="catatan" name="catatan" rows="3" placeholder="Berikan catatan jika diperlukan"></textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button type="submit" name="action" value="approve" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Setujui
+                  </button>
+                  <button type="submit" name="action" value="reject" class="btn btn-danger">
+                    <i class="bi bi-x-circle"></i> Tolak
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <% } %>
+
+          <!-- Catatan Approval (Jika ada) -->
+          <% if (proker.catatan_approval) { %>
+          <hr class="my-4">
+          <div class="row">
+            <div class="col-12">
+              <h5 class="mb-3"><i class="bi bi-chat-left-text"></i> Catatan Approval</h5>
+              <div class="alert alert-light">
+                <p class="mb-2"><%= proker.catatan_approval %></p>
+                <small class="text-muted">
+                  Oleh: <%= proker.approved_by_name %> •
+                  <%= new Date(proker.approved_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                </small>
+              </div>
+            </div>
+          </div>
+          <% } %>
+
+          <!-- Submit untuk Approval (Untuk status draft) -->
+          <% if (proker.status === 'draft' && user && proker.pengusul_id === user.userId) { %>
+          <hr class="my-4">
+          <div class="row">
+            <div class="col-12">
+              <div class="alert alert-warning">
+                <i class="bi bi-info-circle"></i> Program kerja ini masih berstatus draft. Ajukan untuk mendapatkan persetujuan.
+              </div>
+              <form action="/proker/<%= proker.id %>/submit" method="POST" onsubmit="return confirm('Yakin ingin mengajukan program kerja ini untuk approval?')">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-send"></i> Ajukan untuk Approval
+                </button>
+              </form>
+            </div>
+          </div>
+          <% } %>
+
+          <!-- History Section -->
+          <% if (history && history.length > 0) { %>
+          <hr class="my-4">
+          <div class="row">
+            <div class="col-12">
+              <h5 class="mb-3"><i class="bi bi-clock-history"></i> Riwayat Perubahan</h5>
+              <div class="table-responsive">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Tanggal</th>
+                      <th>Perubahan</th>
+                      <th>Catatan</th>
+                      <th>Oleh</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% history.forEach(h => { %>
+                    <tr>
+                      <td>
+                        <small>
+                          <%= new Date(h.changed_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                        </small>
+                      </td>
+                      <td>
+                        <span class="badge bg-secondary"><%= h.status_lama %></span>
+                        <i class="bi bi-arrow-right"></i>
+                        <span class="badge bg-primary"><%= h.status_baru %></span>
+                      </td>
+                      <td><small><%= h.catatan || '-' %></small></td>
+                      <td><small><%= h.changed_by_name %></small></td>
+                    </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <% } %>
+
+          <!-- Action Buttons -->
+          <hr class="my-4">
+          <div class="d-flex justify-content-between">
+            <a href="/proker" class="btn btn-secondary">
+              <i class="bi bi-arrow-left"></i> Kembali
+            </a>
+            <div>
+              <% if (user && (user.roleLevel <= 2 || proker.pengusul_id === user.userId)) { %>
+              <a href="/proker/edit/<%= proker.id %>" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Edit
+              </a>
+              <button type="button" class="btn btn-danger" onclick="confirmDelete(<%= proker.id %>, '<%= proker.judul %>')">
+                <i class="bi bi-trash"></i> Hapus
+              </button>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade text-left" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title white" id="deleteModalLabel">
+          <i class="bi bi-exclamation-triangle"></i> Konfirmasi Hapus
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <i data-feather="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah Anda yakin ingin menghapus program kerja <strong id="deleteProkerTitle" class="text-danger"></strong>?</p>
+        <div class="alert alert-light-warning color-warning">
+          <i class="bi bi-info-circle"></i> <strong>Perhatian!</strong> Data yang dihapus tidak dapat dikembalikan!
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+          <i class="bx bx-x d-block d-sm-none"></i>
+          <span class="d-none d-sm-block">Batal</span>
+        </button>
+        <form id="deleteForm" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-danger ml-1">
+            <i class="bx bx-check d-block d-sm-none"></i>
+            <span class="d-none d-sm-block">Hapus</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function confirmDelete(prokerId, prokerTitle) {
+    document.getElementById('deleteProkerTitle').textContent = prokerTitle;
+    document.getElementById('deleteForm').action = '/proker/delete/' + prokerId;
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+  }
+
+  // Auto dismiss alerts after 5 seconds
+  setTimeout(function() {
+    const alerts = document.querySelectorAll('.alert-dismissible');
+    alerts.forEach(alert => {
+      const bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    });
+  }, 5000);
+</script>
