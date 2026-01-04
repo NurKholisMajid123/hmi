@@ -1,0 +1,87 @@
+<% if (error) { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class="bi bi-exclamation-circle"></i> <%= error %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<section class="section">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Form Edit Bidang</h5>
+        </div>
+        <div class="card-body">
+          <form action="/bidang/edit/<%= bidang.id %>" method="POST">
+            <div class="mb-3">
+              <label for="nama_bidang" class="form-label">Nama Bidang <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="nama_bidang" name="nama_bidang" value="<%= bidang.nama_bidang %>" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="deskripsi" class="form-label">Deskripsi</label>
+              <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3"><%= bidang.deskripsi || '' %></textarea>
+              <small class="text-muted">Opsional: Jelaskan fungsi dan peran bidang ini</small>
+            </div>
+
+            <div class="mb-3">
+              <label for="ketua_bidang_id" class="form-label">Ketua Bidang</label>
+              <select class="form-select" id="ketua_bidang_id" name="ketua_bidang_id">
+                <option value="">-- Pilih Ketua Bidang (Opsional) --</option>
+                <% if (ketuaBidangUsers && ketuaBidangUsers.length > 0) { %>
+                <% ketuaBidangUsers.forEach(user => { %>
+                <option value="<%= user.id %>" <%= bidang.ketua_bidang_id === user.id ? 'selected' : '' %>>
+                  <%= user.full_name %> (@<%= user.username %>)
+                </option>
+                <% }); %>
+                <% } %>
+              </select>
+              <small class="text-muted">User dengan role "Ketua Bidang" yang bisa mengelola bidang ini</small>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <a href="/bidang" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Kembali
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Update Bidang
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card bg-light-warning">
+        <div class="card-body">
+          <h6 class="card-title"><i class="bi bi-exclamation-triangle"></i> Perhatian</h6>
+          <ul class="mb-0">
+            <li>Mengubah ketua bidang akan mengubah siapa yang bisa mengelola anggota bidang ini</li>
+            <li>Ketua bidang lama tidak akan bisa akses lagi jika diganti</li>
+            <li>Anggota bidang tidak akan terpengaruh oleh perubahan ketua</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card bg-light-info mt-3">
+        <div class="card-body">
+          <h6 class="card-title"><i class="bi bi-info-circle"></i> Informasi</h6>
+          <p class="mb-1"><strong>Dibuat:</strong><br>
+            <%= new Date(bidang.created_at).toLocaleDateString('id-ID', { 
+              weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            }) %>
+          </p>
+          <% if (bidang.updated_at && bidang.updated_at !== bidang.created_at) { %>
+          <p class="mb-0"><strong>Terakhir diupdate:</strong><br>
+            <%= new Date(bidang.updated_at).toLocaleDateString('id-ID', { 
+              weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            }) %>
+          </p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

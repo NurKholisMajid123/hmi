@@ -10,11 +10,11 @@
         </div>
       </div>
     </div>
-    
     <div class="sidebar-menu">
       <ul class="menu">
         <li class="sidebar-title">Menu</li>
 
+        <!-- Dashboard -->
         <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'dashboard' ? 'active' : '' %>">
           <a href="/dashboard" class='sidebar-link'>
             <i class="bi bi-grid-fill"></i>
@@ -22,7 +22,7 @@
           </a>
         </li>
 
-        <!-- Admin Only Menu -->
+        <!-- Admin Only: Manajemen User -->
         <% if (user && user.roleLevel === 1) { %>
         <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'users' ? 'active' : '' %>">
           <a href="/users" class='sidebar-link'>
@@ -32,7 +32,27 @@
         </li>
         <% } %>
 
-        <!-- Pengurus Menu -->
+        <!-- Admin, Ketua Umum, Ketua Bidang: Manajemen Bidang -->
+        <% if (user && (user.roleLevel === 1 || user.roleLevel === 2 || user.roleLevel === 4)) { %>
+        <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'bidang' ? 'active' : '' %>">
+          <a href="/bidang" class='sidebar-link'>
+            <i class="bi bi-diagram-3-fill"></i>
+            <span>Manajemen Bidang</span>
+          </a>
+        </li>
+        <% } %>
+
+        <!-- Ketua Bidang dan Anggota: Bidang Saya -->
+        <% if (user && user.roleLevel >= 4) { %>
+        <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'bidang-saya' ? 'active' : '' %>">
+          <a href="/my-bidang" class='sidebar-link'>
+            <i class="bi bi-bookmark-fill"></i>
+            <span>Bidang Saya</span>
+          </a>
+        </li>
+        <% } %>
+
+        <!-- Pengurus: Laporan -->
         <% if (user && user.roleLevel <= 3) { %>
         <li class="sidebar-item has-sub">
           <a href="#" class='sidebar-link'>
@@ -50,6 +70,7 @@
         </li>
         <% } %>
 
+        <!-- Profil Saya -->
         <li class="sidebar-item">
           <a href="/profile" class='sidebar-link'>
             <i class="bi bi-person-fill"></i>
@@ -57,13 +78,13 @@
           </a>
         </li>
 
+        <!-- Logout -->
         <li class="sidebar-item">
           <a href="/logout" class='sidebar-link'>
             <i class="bi bi-box-arrow-right"></i>
             <span>Logout</span>
           </a>
         </li>
-
       </ul>
     </div>
     <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>

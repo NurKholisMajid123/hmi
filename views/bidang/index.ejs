@@ -1,0 +1,190 @@
+<!-- Alert Messages -->
+<% if (query.success) { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <i class="bi bi-check-circle"></i> <%= query.success %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<% } %>
+<% if (query.error) { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class="bi bi-exclamation-circle"></i> <%= query.error %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<% } %>
+
+<!-- Bidang Table Section -->
+<section class="section">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title">Data Bidang</h4>
+            <% if (user && user.roleLevel === 1) { %>
+            <a href="/bidang/create" class="btn btn-primary">
+              <i class="bi bi-plus-circle"></i> Tambah Bidang
+            </a>
+            <% } %>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <% if (bidangList && bidangList.length > 0) { %>
+            <!-- Search Row -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-search"></i></span>
+                  <input type="text" class="form-control" id="searchInput" placeholder="Cari bidang...">
+                </div>
+              </div>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Table with outer spacing -->
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="bidangTable">
+              <thead>
+                <tr>
+                  <th>NO</th>
+                  <th>NAMA BIDANG</th>
+                  <th>KETUA BIDANG</th>
+                  <th>JUMLAH ANGGOTA</th>
+                  <th>DESKRIPSI</th>
+                  <th>AKSI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (bidangList && bidangList.length > 0) { %>
+                <% bidangList.forEach((bidang, index) => { %>
+                <tr>
+                  <td class="text-bold-500"><%= index + 1 %></td>
+                  <td><strong><%= bidang.nama_bidang %></strong></td>
+                  <td>
+                    <% if (bidang.ketua_name) { %>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-person-badge me-2"></i>
+                      <span><%= bidang.ketua_name %></span>
+                    </div>
+                    <% } else { %>
+                    <span class="badge bg-light-secondary">Belum ada ketua</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <span class="badge bg-light-primary">
+                      <%= bidang.jumlah_anggota || 0 %> orang
+                    </span>
+                  </td>
+                  <td>
+                    <%= bidang.deskripsi ? (bidang.deskripsi.length > 50 ? bidang.deskripsi.substring(0, 50) + '...' : bidang.deskripsi) : '-' %>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <!-- Tombol Kelola Anggota - Admin, Ketua Umum, atau Ketua Bidang yang bersangkutan -->
+                      <% if (user.roleLevel === 1 || user.roleLevel === 2 || (user.roleLevel === 4 && bidang.ketua_bidang_id === user.userId)) { %>
+                      <a href="/bidang/<%= bidang.id %>/anggota" class="btn btn-sm btn-info" title="Kelola Anggota">
+                        <i class="bi bi-people"></i>
+                      </a>
+                      <% } %>
+
+                      <!-- Tombol Edit - Admin only -->
+                      <% if (user.roleLevel === 1) { %>
+                      <a href="/bidang/edit/<%= bidang.id %>" class="btn btn-sm btn-warning" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+
+                      <!-- Tombol Delete - Admin only -->
+                      <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(<%= bidang.id %>, '<%= bidang.nama_bidang %>')" title="Hapus">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                      <% } %>
+                    </div>
+                  </td>
+                </tr>
+                <% }); %>
+                <% } else { %>
+                <tr>
+                  <td colspan="6" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-2">Belum ada data bidang.</p>
+                    <% if (user && user.roleLevel === 1) { %>
+                    <a href="/bidang/create" class="btn btn-primary mt-2">
+                      <i class="bi bi-plus-circle"></i> Tambah Bidang Pertama
+                    </a>
+                    <% } %>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade text-left" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title white" id="deleteModalLabel">
+          <i class="bi bi-exclamation-triangle"></i> Konfirmasi Hapus
+        </h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <i data-feather="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah Anda yakin ingin menghapus bidang <strong id="deleteName" class="text-danger"></strong>?</p>
+        <div class="alert alert-light-warning color-warning">
+          <i class="bi bi-info-circle"></i> <strong>Perhatian!</strong> Semua anggota di bidang ini akan dihapus dari bidang.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+          <i class="bx bx-x d-block d-sm-none"></i>
+          <span class="d-none d-sm-block">Batal</span>
+        </button>
+        <form id="deleteForm" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-danger ml-1">
+            <i class="bx bx-check d-block d-sm-none"></i>
+            <span class="d-none d-sm-block">Hapus</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Search functionality
+  document.getElementById('searchInput')?.addEventListener('keyup', function() {
+    const searchValue = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#bidangTable tbody tr');
+
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(searchValue) ? '' : 'none';
+    });
+  });
+
+  // Delete confirmation
+  function confirmDelete(id, name) {
+    document.getElementById('deleteName').textContent = name;
+    document.getElementById('deleteForm').action = '/bidang/delete/' + id;
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+  }
+
+  // Auto dismiss alerts after 5 seconds
+  setTimeout(function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+      const bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    });
+  }, 5000);
+</script>

@@ -1,0 +1,92 @@
+<section class="section">
+  <div class="row">
+    <!-- Info Bidang -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informasi Bidang</h5>
+        </div>
+        <div class="card-body">
+          <h4 class="mb-3"><%= bidang.nama_bidang %></h4>
+
+          <div class="mb-3">
+            <label class="text-muted small">Ketua Bidang:</label>
+            <% if (bidang.ketua_name) { %>
+            <div class="d-flex align-items-center">
+              <div class="avatar avatar-sm bg-light-primary me-2">
+                <span class="avatar-content"><%= bidang.ketua_name.charAt(0) %></span>
+              </div>
+              <div>
+                <strong><%= bidang.ketua_name %></strong><br>
+                <small class="text-muted"><%= bidang.ketua_email %></small>
+              </div>
+            </div>
+            <% } else { %>
+            <span class="badge bg-light-secondary">Belum ada ketua</span>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="text-muted small">Deskripsi:</label>
+            <p><%= bidang.deskripsi || 'Tidak ada deskripsi' %></p>
+          </div>
+
+          <div class="mb-0">
+            <label class="text-muted small">Total Anggota:</label>
+            <h3 class="mb-0"><span class="badge bg-primary"><%= anggota.length %> orang</span></h3>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="/my-bidang" class="btn btn-secondary w-100">
+            <i class="bi bi-arrow-left"></i> Kembali
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daftar Anggota -->
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="bi bi-people-fill"></i> Anggota Bidang</h5>
+        </div>
+        <div class="card-body">
+          <% if (anggota && anggota.length > 0) { %>
+          <div class="row">
+            <% anggota.forEach(member => { %>
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center p-3 border rounded">
+                <div class="avatar avatar-lg bg-light-primary me-3">
+                  <span class="avatar-content fs-5">
+                    <%= member.full_name.charAt(0).toUpperCase() %>
+                  </span>
+                </div>
+                <div>
+                  <h6 class="mb-0"><%= member.full_name %></h6>
+                  <small class="text-muted"><%= member.email %></small><br>
+                  <small class="text-muted">@<%= member.username %></small>
+                  <% if (member.is_active) { %>
+                  <span class="badge bg-success ms-2">
+                    <i class="bi bi-check-circle"></i> Aktif
+                  </span>
+                  <% } else { %>
+                  <span class="badge bg-secondary ms-2">
+                    <i class="bi bi-x-circle"></i> Nonaktif
+                  </span>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+          </div>
+          <% } else { %>
+          <div class="text-center py-5">
+            <i class="bi bi-inbox" style="font-size: 4rem; color: #ddd;"></i>
+            <p class="text-muted mt-3">Belum ada anggota di bidang ini</p>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

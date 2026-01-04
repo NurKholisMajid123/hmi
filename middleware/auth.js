@@ -20,12 +20,12 @@ const checkRole = (...allowedLevels) => {
     if (!req.session || !req.session.userId) {
       return res.redirect('/login');
     }
-    
+
     const userLevel = req.session.roleLevel;
     if (allowedLevels.includes(userLevel)) {
       return next();
     }
-    
+
     res.status(403).render('errors/403', {
       title: 'Akses Ditolak',
       message: 'Anda tidak memiliki akses ke halaman ini',
@@ -39,11 +39,11 @@ const isAdmin = (req, res, next) => {
   if (!req.session || !req.session.userId) {
     return res.redirect('/login');
   }
-  
+
   if (req.session.roleLevel === 1) {
     return next();
   }
-  
+
   res.status(403).render('errors/403', {
     title: 'Akses Ditolak',
     message: 'Halaman ini hanya dapat diakses oleh Administrator',
@@ -56,12 +56,12 @@ const isPengurus = (req, res, next) => {
   if (!req.session || !req.session.userId) {
     return res.redirect('/login');
   }
-  
+
   const userLevel = req.session.roleLevel;
   if (userLevel >= 1 && userLevel <= 3) {
     return next();
   }
-  
+
   res.status(403).render('errors/403', {
     title: 'Akses Ditolak',
     message: 'Halaman ini hanya dapat diakses oleh Pengurus Inti',
@@ -73,27 +73,27 @@ const isPengurus = (req, res, next) => {
 const setLocals = (req, res, next) => {
   res.locals.user = req.session || null;
   res.locals.isAuthenticated = req.session && req.session.userId ? true : false;
-  
+
   res.locals.isAdmin = () => {
     return req.session && req.session.roleLevel === 1;
   };
-  
+
   res.locals.isPengurus = () => {
     return req.session && req.session.roleLevel >= 1 && req.session.roleLevel <= 3;
   };
-  
+
   res.locals.isKabid = () => {
     return req.session && req.session.roleLevel === 4;
   };
-  
+
   res.locals.hasRole = (level) => {
     return req.session && req.session.roleLevel === level;
   };
-  
+
   res.locals.canAccess = (...levels) => {
     return req.session && levels.includes(req.session.roleLevel);
   };
-  
+
   next();
 };
 
@@ -114,12 +114,36 @@ const noCache = (req, res, next) => {
   next();
 };
 
+// Middleware untuk Ketua Bidang
+const isKetuaBidang = (req, res, next) => {
+  if (!req.session || !req.session.userId) {
+    return res.redirect('/login');
+  }
+
+  // Admin dan Ketua Umum bisa akses semua
+  if (req.session.roleLevel === 1 || req.session.roleLevel === 2) {
+    return next();
+  }
+
+  // Role level 4 adalah Ketua Bidang
+  if (req.session.roleLevel === 4) {
+    return next();
+  }
+
+  res.status(403).render('errors/403', {
+    title: 'Akses Ditolak',
+    message: 'Halaman ini hanya dapat diakses oleh Ketua Bidang atau Admin',
+    user: req.session
+  });
+};
+
 module.exports = {
   isAuthenticated,
   isGuest,
   checkRole,
   isAdmin,
   isPengurus,
+  isKetuaBidang,
   setLocals,
   logActivity,
   noCache

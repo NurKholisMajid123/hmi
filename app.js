@@ -54,6 +54,8 @@ app.use(logActivity); // Log activity (opsional)
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const userRoutes = require('./routes/users');
+const bidangRoutes = require('./routes/bidang');
+const myBidangRoutes = require('./routes/my-bidang');
 
 
 // Use routes
@@ -66,6 +68,8 @@ app.get('/', setLocals, (req, res) => {
 app.use('/', authRoutes); // Login/logout
 app.use('/dashboard', dashboardRoutes);
 app.use('/users', userRoutes);
+app.use('/bidang', bidangRoutes);
+app.use('/my-bidang', myBidangRoutes);
 
 
 // Error handlers
