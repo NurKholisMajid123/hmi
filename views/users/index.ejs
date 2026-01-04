@@ -1,3 +1,65 @@
+<!-- Alert Messages -->
+<% if (typeof query !== 'undefined' && query.success) { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <i class="bi bi-check-circle"></i> <%= query.success %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<% if (typeof query !== 'undefined' && query.error) { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class="bi bi-exclamation-triangle"></i> <%= query.error %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<!-- Filter Section -->
+<section class="section">
+  <div class="card mb-3">
+    <div class="card-body">
+      <form method="GET" action="/users" class="row g-3">
+        <div class="col-md-4">
+          <label for="role_id" class="form-label">
+            <i class="bi bi-person-badge"></i> Filter by Role
+          </label>
+          <select class="form-select" id="role_id" name="role_id" onchange="this.form.submit()">
+            <option value="">Semua Role</option>
+            <% if (typeof roles !== 'undefined' && roles) { %>
+            <% roles.forEach(role => { %>
+            <option value="<%= role.id %>" <%= query.role_id == role.id ? 'selected' : '' %>>
+              <%= role.role_name %>
+            </option>
+            <% }); %>
+            <% } %>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label for="bidang_id" class="form-label">
+            <i class="bi bi-diagram-3"></i> Filter by Bidang
+          </label>
+          <select class="form-select" id="bidang_id" name="bidang_id" onchange="this.form.submit()">
+            <option value="">Semua Bidang</option>
+            <% if (typeof bidangList !== 'undefined' && bidangList) { %>
+            <% bidangList.forEach(bidang => { %>
+            <option value="<%= bidang.id %>" <%= query.bidang_id == bidang.id ? 'selected' : '' %>>
+              <%= bidang.nama_bidang %>
+            </option>
+            <% }); %>
+            <% } %>
+          </select>
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end gap-2">
+          <a href="/users" class="btn btn-secondary flex-grow-1">
+            <i class="bi bi-x-circle"></i> Reset Filter
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
 <!-- Users Table Section -->
 <section class="section">
   <div class="row">
@@ -5,44 +67,45 @@
       <div class="card">
         <div class="card-header">
           <div class="d-flex justify-content-between align-items-center">
-            <h4 class="card-title">Data User</h4>
+            <div>
+              <h4 class="card-title mb-1">Data User</h4>
+              <% if (query.bidang_id && typeof bidangList !== 'undefined') { %>
+              <% const selectedBidang = bidangList.find(b => b.id == query.bidang_id); %>
+              <% if (selectedBidang) { %>
+              <small class="text-muted">
+                <i class="bi bi-funnel"></i> Filter: <%= selectedBidang.nama_bidang %>
+              </small>
+              <% } %>
+              <% } %>
+              <% if (query.role_id && typeof roles !== 'undefined') { %>
+              <% const selectedRole = roles.find(r => r.id == query.role_id); %>
+              <% if (selectedRole) { %>
+              <small class="text-muted">
+                <i class="bi bi-funnel"></i> Filter: <%= selectedRole.role_name %>
+              </small>
+              <% } %>
+              <% } %>
+            </div>
             <a href="/users/create" class="btn btn-primary">
               <i class="bi bi-plus-circle"></i> Tambah User
             </a>
           </div>
         </div>
+
         <div class="card-content">
           <div class="card-body">
-            <!-- Alert Messages -->
-            <% if (typeof query !== 'undefined' && query.success) { %>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-              <i class="bi bi-check-circle"></i> <%= query.success %>
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <% } %>
-
-            <% if (typeof query !== 'undefined' && query.error) { %>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-              <i class="bi bi-exclamation-triangle"></i> <%= query.error %>
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <% } %>
-
-            <!-- Search and Filter Row -->
+            <!-- Search Row -->
             <div class="row mb-3">
               <div class="col-md-6">
                 <div class="input-group">
                   <span class="input-group-text"><i class="bi bi-search"></i></span>
-                  <input type="text" class="form-control" id="searchInput" placeholder="Cari user...">
+                  <input type="text" class="form-control" id="searchInput" placeholder="Cari username, nama, email...">
                 </div>
               </div>
               <div class="col-md-6 text-end">
-                <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-outline-primary active" onclick="filterByRole('all')">Semua</button>
-                  <button type="button" class="btn btn-outline-primary" onclick="filterByRole('1')">Admin</button>
-                  <button type="button" class="btn btn-outline-primary" onclick="filterByRole('2')">Ketua</button>
-                  <button type="button" class="btn btn-outline-primary" onclick="filterByRole('5')">Anggota</button>
-                </div>
+                <span class="text-muted">
+                  Total: <strong id="totalUsers"><%= users ? users.length : 0 %></strong> user
+                </span>
               </div>
             </div>
           </div>
@@ -57,6 +120,7 @@
                   <th>NAMA LENGKAP</th>
                   <th>EMAIL</th>
                   <th>ROLE</th>
+                  <th>BIDANG</th>
                   <th>STATUS</th>
                   <th>AKSI</th>
                 </tr>
@@ -64,7 +128,7 @@
               <tbody>
                 <% if (users && users.length > 0) { %>
                 <% users.forEach((user, index) => { %>
-                <tr data-role="<%= user.role_level %>">
+                <tr>
                   <td class="text-bold-500"><%= index + 1 %></td>
                   <td>
                     <div class="d-flex align-items-center">
@@ -72,24 +136,56 @@
                         <% if (user.profile_photo) { %>
                         <img src="<%= user.profile_photo %>" alt="Avatar">
                         <% } else { %>
-                        <img src="/dashboard-template/dist/assets/images/faces/1.jpg" alt="Avatar">
+                        <div class="avatar-content bg-light-primary">
+                          <%= user.full_name.charAt(0).toUpperCase() %>
+                        </div>
                         <% } %>
                       </div>
-                      <span class="text-bold-500"><%= user.username %></span>
+                      <span class="text-bold-500">@<%= user.username %></span>
                     </div>
                   </td>
-                  <td><%= user.full_name %></td>
+                  <td><strong><%= user.full_name %></strong></td>
                   <td><%= user.email %></td>
                   <td>
                     <% 
-                      let badgeClass = 'bg-secondary';
-                      if (user.role_level === 1) badgeClass = 'bg-danger';
-                      else if (user.role_level === 2) badgeClass = 'bg-primary';
-                      else if (user.role_level === 3) badgeClass = 'bg-info';
-                      else if (user.role_level === 4) badgeClass = 'bg-warning';
-                      else if (user.role_level === 5) badgeClass = 'bg-success';
-                    %>
+                        let badgeClass = 'bg-secondary';
+                        if (user.role_level === 1) badgeClass = 'bg-danger';
+                        else if (user.role_level === 2) badgeClass = 'bg-primary';
+                        else if (user.role_level === 3) badgeClass = 'bg-info';
+                        else if (user.role_level === 4) badgeClass = 'bg-warning';
+                        else if (user.role_level === 5 || user.role_level === 6) badgeClass = 'bg-success';
+                      %>
                     <span class="badge <%= badgeClass %>"><%= user.role_name %></span>
+                  </td>
+                  <td>
+                    <% if (user.posisi_di_bidang) { %>
+                    <!-- Untuk hasil filter bidang -->
+                    <% if (user.posisi_di_bidang === 'Ketua Bidang') { %>
+                    <span class="badge bg-warning">
+                      <i class="bi bi-star-fill"></i> Ketua Bidang
+                    </span>
+                    <% } else { %>
+                    <span class="badge bg-primary">
+                      <i class="bi bi-person"></i> Anggota
+                    </span>
+                    <% } %>
+                    <% } else if (user.bidang_ketua) { %>
+                    <!-- User adalah ketua bidang -->
+                    <span class="badge bg-warning" title="Ketua <%= user.bidang_ketua %>">
+                      <i class="bi bi-star-fill"></i> <%= user.bidang_ketua %>
+                    </span>
+                    <% } else if (user.bidang_anggota) { %>
+                    <!-- User adalah anggota bidang -->
+                    <div class="d-flex flex-wrap gap-1">
+                      <% user.bidang_anggota.split(', ').forEach(bidang => { %>
+                      <span class="badge bg-primary" style="font-size: 0.7rem;">
+                        <%= bidang %>
+                      </span>
+                      <% }); %>
+                    </div>
+                    <% } else { %>
+                    <span class="text-muted">-</span>
+                    <% } %>
                   </td>
                   <td>
                     <% if (user.is_active) { %>
@@ -98,7 +194,7 @@
                     </span>
                     <% } else { %>
                     <span class="badge bg-secondary">
-                      <i class="bi bi-x-circle"></i> Tidak Aktif
+                      <i class="bi bi-x-circle"></i> Nonaktif
                     </span>
                     <% } %>
                   </td>
@@ -110,7 +206,7 @@
                       <a href="/users/edit/<%= user.id %>" class="btn btn-sm btn-warning" title="Edit">
                         <i class="bi bi-pencil"></i>
                       </a>
-                      <% if (user.id !== locals.userId) { %>
+                      <% if (typeof locals.user !== 'undefined' && user.id !== locals.user.userId) { %>
                       <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(<%= user.id %>, '<%= user.username %>')" title="Hapus">
                         <i class="bi bi-trash"></i>
                       </button>
@@ -118,12 +214,21 @@
                     </div>
                   </td>
                 </tr>
-                <% }) %>
+                <% }); %>
                 <% } else { %>
                 <tr>
-                  <td colspan="7" class="text-center text-muted py-4">
+                  <td colspan="8" class="text-center text-muted py-5">
                     <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-                    <p class="mt-2">Tidak ada data user</p>
+                    <p class="mt-2">
+                      <% if (query.bidang_id || query.role_id) { %>
+                      Tidak ada user dengan filter yang dipilih
+                      <% } else { %>
+                      Belum ada data user
+                      <% } %>
+                    </p>
+                    <% if (query.bidang_id || query.role_id) { %>
+                    <a href="/users" class="btn btn-sm btn-primary mt-2">Reset Filter</a>
+                    <% } %>
                   </td>
                 </tr>
                 <% } %>
@@ -172,32 +277,31 @@
 
 <script>
   // Search functionality
-  document.getElementById('searchInput').addEventListener('keyup', function() {
-    const searchValue = this.value.toLowerCase();
-    const rows = document.querySelectorAll('#userTable tbody tr');
+  const searchInput = document.getElementById('searchInput');
+  const userTable = document.getElementById('userTable');
+  const totalUsersSpan = document.getElementById('totalUsers');
 
-    rows.forEach(row => {
-      const text = row.textContent.toLowerCase();
-      row.style.display = text.includes(searchValue) ? '' : 'none';
-    });
-  });
+  if (searchInput) {
+    searchInput.addEventListener('keyup', function() {
+      const searchValue = this.value.toLowerCase();
+      const rows = userTable.querySelectorAll('tbody tr');
+      let visibleCount = 0;
 
-  // Filter by role
-  function filterByRole(roleLevel) {
-    const rows = document.querySelectorAll('#userTable tbody tr');
-    const buttons = document.querySelectorAll('.btn-group button');
+      rows.forEach(row => {
+        // Skip empty state row
+        if (row.children.length === 1 && row.children[0].colSpan > 1) {
+          return;
+        }
 
-    // Update active button
-    buttons.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+        const text = row.textContent.toLowerCase();
+        const isVisible = text.includes(searchValue);
+        row.style.display = isVisible ? '' : 'none';
 
-    rows.forEach(row => {
-      if (roleLevel === 'all') {
-        row.style.display = '';
-      } else {
-        const userRole = row.getAttribute('data-role');
-        row.style.display = userRole === roleLevel ? '' : 'none';
-      }
+        if (isVisible) visibleCount++;
+      });
+
+      // Update total count
+      totalUsersSpan.textContent = visibleCount;
     });
   }
 
@@ -211,10 +315,54 @@
 
   // Auto dismiss alerts after 5 seconds
   setTimeout(function() {
-    const alerts = document.querySelectorAll('.alert');
+    const alerts = document.querySelectorAll('.alert-dismissible');
     alerts.forEach(alert => {
       const bsAlert = new bootstrap.Alert(alert);
       bsAlert.close();
     });
   }, 5000);
+
+  // Highlight current filter
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasFilter = urlParams.get('bidang_id') || urlParams.get('role_id');
+
+    if (hasFilter) {
+      const filterCard = document.querySelector('.card.mb-3');
+      if (filterCard) {
+        filterCard.classList.add('border-primary');
+      }
+    }
+  });
 </script>
+
+<style>
+  /* Custom styling for better UX */
+  .avatar-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  .card.border-primary {
+    border-width: 2px !important;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+  }
+
+  .table td {
+    vertical-align: middle;
+  }
+
+  .btn-group .btn {
+    margin: 0 2px;
+  }
+</style>

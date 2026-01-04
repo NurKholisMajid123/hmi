@@ -7,12 +7,51 @@ class User {
     const query = `
       SELECT u.id, u.username, u.email, u.full_name, u.phone, 
              u.address, u.is_active, u.profile_photo, u.created_at,
-             r.role_name, r.role_level
+             r.role_name, r.role_level,
+             b.nama_bidang as bidang_ketua,
+             (
+               SELECT string_agg(b2.nama_bidang, ', ')
+               FROM user_bidang ub
+               JOIN bidang b2 ON ub.bidang_id = b2.id
+               WHERE ub.user_id = u.id
+             ) as bidang_anggota
       FROM users u
       JOIN roles r ON u.role_id = r.id
+      LEFT JOIN bidang b ON b.ketua_bidang_id = u.id
       ORDER BY r.role_level ASC, u.full_name ASC
     `;
     const result = await pool.query(query);
+    return result.rows;
+  }
+
+  // Get users by bidang (ketua + anggota)
+  static async findByBidang(bidangId) {
+    const query = `
+      SELECT u.id, u.username, u.email, u.full_name, u.phone, 
+             u.address, u.is_active, u.profile_photo, u.created_at,
+             r.role_name, r.role_level,
+             CASE 
+               WHEN b.ketua_bidang_id = u.id THEN 'Ketua Bidang'
+               ELSE 'Anggota'
+             END as posisi_di_bidang,
+             CASE 
+               WHEN b.ketua_bidang_id = u.id THEN 0
+               ELSE 1
+             END as sort_order
+      FROM users u
+      JOIN roles r ON u.role_id = r.id
+      CROSS JOIN bidang b
+      WHERE b.id = $1
+        AND u.id IN (
+          -- User sebagai ketua bidang
+          SELECT ketua_bidang_id FROM bidang WHERE id = $1 AND ketua_bidang_id IS NOT NULL
+          UNION
+          -- User sebagai anggota bidang
+          SELECT user_id FROM user_bidang WHERE bidang_id = $1
+        )
+      ORDER BY sort_order, u.full_name ASC
+    `;
+    const result = await pool.query(query, [bidangId]);
     return result.rows;
   }
 
@@ -55,7 +94,7 @@ class User {
     return result.rows[0];
   }
 
-  // Create new user - FIXED: Tambahkan is_active
+  // Create new user
   static async create(userData) {
     const { username, email, password, full_name, phone, address, role_id, is_active } = userData;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -73,7 +112,7 @@ class User {
       phone, 
       address, 
       role_id,
-      is_active !== undefined ? is_active : true // Default true jika tidak diset
+      is_active !== undefined ? is_active : true
     ];
     const result = await pool.query(query, values);
     return result.rows[0];
@@ -116,10 +155,19 @@ class User {
   // Get users by role
   static async findByRole(roleId) {
     const query = `
-      SELECT u.id, u.username, u.email, u.full_name, u.phone, u.created_at,
-             r.role_name
+      SELECT u.id, u.username, u.email, u.full_name, u.phone, 
+             u.address, u.is_active, u.profile_photo, u.created_at,
+             r.role_name, r.role_level,
+             b.nama_bidang as bidang_ketua,
+             (
+               SELECT string_agg(b2.nama_bidang, ', ')
+               FROM user_bidang ub
+               JOIN bidang b2 ON ub.bidang_id = b2.id
+               WHERE ub.user_id = u.id
+             ) as bidang_anggota
       FROM users u
       JOIN roles r ON u.role_id = r.id
+      LEFT JOIN bidang b ON b.ketua_bidang_id = u.id
       WHERE u.role_id = $1 AND u.is_active = true
       ORDER BY u.full_name ASC
     `;

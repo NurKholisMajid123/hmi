@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Role = require('../models/Role');
+const Bidang = require('../models/Bidang');
 const { isAdmin, noCache } = require('../middleware/auth');
 const { sanitizeInput, validateEmail } = require('../middleware/validation');
 
@@ -37,13 +38,35 @@ const renderForm = (res, type, data = {}) => {
 // List all users
 router.get('/', isAdmin, noCache, async (req, res) => {
   try {
-    const users = await User.findAll();
+    const { bidang_id, role_id } = req.query;
+    
+    let users;
+    
+    // Filter berdasarkan bidang
+    if (bidang_id) {
+      users = await User.findByBidang(bidang_id);
+    } 
+    // Filter berdasarkan role
+    else if (role_id) {
+      users = await User.findByRole(role_id);
+    } 
+    // Tampilkan semua
+    else {
+      users = await User.findAll();
+    }
+    
+    // Get data untuk dropdown filter
+    const roles = await Role.findAll();
+    const bidangList = await Bidang.findAll();
+    
     res.render('users/index', {
       title: 'Daftar User',
       subtitle: 'Manajemen data pengguna sistem',
       layout: 'layouts/dashboard',
       activeMenu: 'users',
       users,
+      roles,
+      bidangList,
       query: req.query
     });
   } catch (error) {
