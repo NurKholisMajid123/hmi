@@ -66,6 +66,18 @@
                     <td><%= proker.deskripsi || '-' %></td>
                   </tr>
                   <tr>
+                    <th>Tujuan</th>
+                    <td><%= proker.tujuan || '-' %></td>
+                  </tr>
+                  <tr>
+                    <th>Sasaran</th>
+                    <td><%= proker.sasaran || '-' %></td>
+                  </tr>
+                  <tr>
+                    <th>Target</th>
+                    <td><%= proker.target || '-' %></td>
+                  </tr>
+                  <tr>
                     <th>Pengusul</th>
                     <td>
                       <i class="bi bi-person"></i> <%= proker.pengusul_name %>
@@ -96,6 +108,16 @@
                       <% if (proker.tanggal_selesai) { %>
                       <i class="bi bi-calendar-check"></i>
                       <%= new Date(proker.tanggal_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                      <% } else { %>
+                      <span class="text-muted">Belum ditentukan</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Waktu Pelaksanaan</th>
+                    <td>
+                      <% if (proker.waktu_pelaksanaan) { %>
+                      <i class="bi bi-clock"></i> <%= proker.waktu_pelaksanaan %>
                       <% } else { %>
                       <span class="text-muted">Belum ditentukan</span>
                       <% } %>

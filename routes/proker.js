@@ -108,8 +108,9 @@ router.get('/create', isAuthenticated, canCreateProker, noCache, async (req, res
 // Store new proker
 router.post('/create', isAuthenticated, canCreateProker, sanitizeInput, async (req, res) => {
     const {
-        judul, deskripsi, kategori_id, bidang_id, tanggal_mulai,
-        tanggal_selesai, anggaran, penanggung_jawab_id, status
+        judul, deskripsi, tujuan, sasaran, target, kategori_id, bidang_id, 
+        tanggal_mulai, tanggal_selesai, waktu_pelaksanaan, anggaran, 
+        penanggung_jawab_id, status
     } = req.body;
 
     const userId = req.session.userId;
@@ -122,10 +123,14 @@ router.post('/create', isAuthenticated, canCreateProker, sanitizeInput, async (r
         await ProgramKerja.create({
             judul,
             deskripsi,
+            tujuan,
+            sasaran,
+            target,
             kategori_id,
             bidang_id: bidang_id || null,
             tanggal_mulai,
             tanggal_selesai,
+            waktu_pelaksanaan,
             anggaran,
             penanggung_jawab_id,
             pengusul_id: userId,
@@ -191,8 +196,9 @@ router.get('/edit/:id', isAuthenticated, canUpdateProker, noCache, async (req, r
 router.post('/edit/:id', isAuthenticated, canUpdateProker, sanitizeInput, async (req, res) => {
     const { id } = req.params;
     const {
-        judul, deskripsi, kategori_id, bidang_id, tanggal_mulai,
-        tanggal_selesai, anggaran, penanggung_jawab_id, status
+        judul, deskripsi, tujuan, sasaran, target, kategori_id, bidang_id, 
+        tanggal_mulai, tanggal_selesai, waktu_pelaksanaan, anggaran, 
+        penanggung_jawab_id, status
     } = req.body;
 
     try {
@@ -205,10 +211,14 @@ router.post('/edit/:id', isAuthenticated, canUpdateProker, sanitizeInput, async 
         await ProgramKerja.update(id, {
             judul,
             deskripsi,
+            tujuan,
+            sasaran,
+            target,
             kategori_id,
             bidang_id: bidang_id || null,
             tanggal_mulai,
             tanggal_selesai,
+            waktu_pelaksanaan,
             anggaran,
             penanggung_jawab_id,
             status: status || oldProker.status

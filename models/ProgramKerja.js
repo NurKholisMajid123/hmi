@@ -125,22 +125,36 @@ class ProgramKerja {
   // Create proker
   static async create(data) {
     const {
-      judul, deskripsi, kategori_id, bidang_id, tanggal_mulai,
-      tanggal_selesai, anggaran, penanggung_jawab_id, pengusul_id, status
+      judul, deskripsi, tujuan, sasaran, target, kategori_id, bidang_id, 
+      tanggal_mulai, tanggal_selesai, waktu_pelaksanaan, anggaran, 
+      penanggung_jawab_id, pengusul_id, status
     } = data;
     
     const query = `
       INSERT INTO program_kerja (
-        judul, deskripsi, kategori_id, bidang_id, tanggal_mulai,
-        tanggal_selesai, anggaran, penanggung_jawab_id, pengusul_id, status
+        judul, deskripsi, tujuan, sasaran, target, kategori_id, bidang_id, 
+        tanggal_mulai, tanggal_selesai, waktu_pelaksanaan, anggaran, 
+        penanggung_jawab_id, pengusul_id, status
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
       RETURNING *
     `;
     
     const values = [
-      judul, deskripsi, kategori_id, bidang_id || null, tanggal_mulai,
-      tanggal_selesai, anggaran || 0, penanggung_jawab_id, pengusul_id, status || 'draft'
+      judul, 
+      deskripsi, 
+      tujuan || null,
+      sasaran || null,
+      target || null,
+      kategori_id, 
+      bidang_id || null, 
+      tanggal_mulai,
+      tanggal_selesai, 
+      waktu_pelaksanaan || null,
+      anggaran || 0, 
+      penanggung_jawab_id, 
+      pengusul_id, 
+      status || 'draft'
     ];
     
     const result = await pool.query(query, values);
@@ -150,22 +164,36 @@ class ProgramKerja {
   // Update proker
   static async update(id, data) {
     const {
-      judul, deskripsi, kategori_id, bidang_id, tanggal_mulai,
-      tanggal_selesai, anggaran, penanggung_jawab_id, status
+      judul, deskripsi, tujuan, sasaran, target, kategori_id, bidang_id, 
+      tanggal_mulai, tanggal_selesai, waktu_pelaksanaan, anggaran, 
+      penanggung_jawab_id, status
     } = data;
     
     const query = `
       UPDATE program_kerja 
-      SET judul = $1, deskripsi = $2, kategori_id = $3, bidang_id = $4,
-          tanggal_mulai = $5, tanggal_selesai = $6, anggaran = $7,
-          penanggung_jawab_id = $8, status = $9, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $10
+      SET judul = $1, deskripsi = $2, tujuan = $3, sasaran = $4, target = $5,
+          kategori_id = $6, bidang_id = $7, tanggal_mulai = $8, 
+          tanggal_selesai = $9, waktu_pelaksanaan = $10, anggaran = $11,
+          penanggung_jawab_id = $12, status = $13, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $14
       RETURNING *
     `;
     
     const values = [
-      judul, deskripsi, kategori_id, bidang_id || null, tanggal_mulai,
-      tanggal_selesai, anggaran || 0, penanggung_jawab_id, status, id
+      judul, 
+      deskripsi, 
+      tujuan || null,
+      sasaran || null,
+      target || null,
+      kategori_id, 
+      bidang_id || null, 
+      tanggal_mulai,
+      tanggal_selesai, 
+      waktu_pelaksanaan || null,
+      anggaran || 0, 
+      penanggung_jawab_id, 
+      status, 
+      id
     ];
     
     const result = await pool.query(query, values);
