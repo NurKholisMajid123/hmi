@@ -1,0 +1,185 @@
+<div class="container-fluid">
+
+
+  <!-- Error Messages -->
+  <% if (user.errorMessage) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-circle me-2"></i><%= user.errorMessage %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% delete user.errorMessage; %>
+  <% } %>
+
+  <div class="row">
+    <!-- Profile Photo Card -->
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h6 class="mb-0"><i class="fas fa-camera me-2"></i>Foto Profil</h6>
+        </div>
+        <div class="card-body text-center">
+          <!-- Current Photo -->
+          <div class="mb-3">
+            <% if (userData.profile_photo) { %>
+            <img src="<%= userData.profile_photo %>" alt="Profile Photo" id="photoPreview" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #e9ecef;">
+            <% } else { %>
+            <div id="photoPreview" class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px; border: 4px solid #e9ecef;">
+              <i class="fas fa-user fa-4x text-white"></i>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Upload Form -->
+          <form action="/profile/upload-photo" method="POST" enctype="multipart/form-data" id="photoForm">
+            <div class="mb-3">
+              <input type="file" class="form-control" name="profile_photo" accept="image/jpeg,image/jpg,image/png,image/gif" id="photoInput" required>
+              <small class="text-muted">
+                Format: JPG, PNG, GIF. Maksimal 2MB
+              </small>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="fas fa-upload me-1"></i> Upload Foto
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Form Card -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Informasi Profil</h5>
+        </div>
+        <div class="card-body">
+          <form action="/profile/edit" method="POST">
+            <!-- Username (Read Only) -->
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="fas fa-id-badge me-1"></i>Username
+              </label>
+              <input type="text" class="form-control" value="<%= userData.username %>" disabled>
+              <small class="text-muted">Username tidak dapat diubah</small>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">
+                <i class="fas fa-envelope me-1"></i>Email <span class="text-danger">*</span>
+              </label>
+              <input type="email" class="form-control <%= errors.email ? 'is-invalid' : '' %>" id="email" name="email" value="<%= userData.email %>" required>
+              <% if (errors.email) { %>
+              <div class="invalid-feedback"><%= errors.email %></div>
+              <% } %>
+            </div>
+
+            <!-- Full Name -->
+            <div class="mb-3">
+              <label for="full_name" class="form-label">
+                <i class="fas fa-user me-1"></i>Nama Lengkap <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control <%= errors.full_name ? 'is-invalid' : '' %>" id="full_name" name="full_name" value="<%= userData.full_name %>" required>
+              <% if (errors.full_name) { %>
+              <div class="invalid-feedback"><%= errors.full_name %></div>
+              <% } %>
+            </div>
+
+            <!-- Phone -->
+            <div class="mb-3">
+              <label for="phone" class="form-label">
+                <i class="fas fa-phone me-1"></i>Nomor Telepon
+              </label>
+              <input type="text" class="form-control <%= errors.phone ? 'is-invalid' : '' %>" id="phone" name="phone" value="<%= userData.phone || '' %>" placeholder="Contoh: 08123456789">
+              <% if (errors.phone) { %>
+              <div class="invalid-feedback"><%= errors.phone %></div>
+              <% } %>
+            </div>
+
+            <!-- Address -->
+            <div class="mb-3">
+              <label for="address" class="form-label">
+                <i class="fas fa-map-marker-alt me-1"></i>Alamat
+              </label>
+              <textarea class="form-control <%= errors.address ? 'is-invalid' : '' %>" id="address" name="address" rows="3" placeholder="Masukkan alamat lengkap"><%= userData.address || '' %></textarea>
+              <% if (errors.address) { %>
+              <div class="invalid-feedback"><%= errors.address %></div>
+              <% } %>
+            </div>
+
+            <!-- Role Info (Read Only) -->
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="fas fa-user-tag me-1"></i>Role
+              </label>
+              <input type="text" class="form-control" value="<%= userData.role_name %>" disabled>
+              <small class="text-muted">Role hanya dapat diubah oleh Administrator</small>
+            </div>
+
+            <hr>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i> Simpan Perubahan
+              </button>
+              <a href="/profile" class="btn btn-secondary">
+                <i class="fas fa-times me-1"></i> Batal
+              </a>
+              <a href="/profile/change-password" class="btn btn-warning ms-auto">
+                <i class="fas fa-key me-1"></i> Ubah Password
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Preview photo before upload
+  document.getElementById('photoInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      // Check file size
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Ukuran file terlalu besar. Maksimal 2MB');
+        e.target.value = '';
+        return;
+      }
+
+      // Preview image
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('photoPreview');
+        preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #e9ecef;">`;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Form validation
+  document.querySelector('form[action="/profile/edit"]').addEventListener('submit', function(e) {
+    const fullName = document.getElementById('full_name').value.trim();
+    const email = document.getElementById('email').value.trim();
+
+    if (!fullName) {
+      e.preventDefault();
+      alert('Nama lengkap harus diisi');
+      return false;
+    }
+
+    if (!email) {
+      e.preventDefault();
+      alert('Email harus diisi');
+      return false;
+    }
+
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      e.preventDefault();
+      alert('Format email tidak valid');
+      return false;
+    }
+  });
+</script>

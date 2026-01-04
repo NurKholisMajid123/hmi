@@ -19,6 +19,8 @@ router.get('/', isAuthenticated, noCache, async (req, res) => {
         const userId = req.session.userId;
         const roleLevel = req.session.roleLevel;
         const { status, kategori_id } = req.query;
+        
+        const DepartemenAnggota = require('../models/DepartemenAnggota');
 
         // Get bidang user jika ketua bidang atau anggota
         let bidangId = null;

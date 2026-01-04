@@ -1,97 +1,36 @@
-<section class="row">
-  <div class="col-12 col-lg-9">
-    <div class="row">
-      <div class="col-6 col-lg-3 col-md-6">
-        <div class="card">
-          <div class="card-body px-3 py-4-5">
-            <div class="row">
-              <div class="col-md-4">
-                <div class="stats-icon purple">
-                  <i class="iconly-boldProfile"></i>
-                </div>
-              </div>
-              <div class="col-md-8">
-                <h6 class="text-muted font-semibold">Total User</h6>
-                <h6 class="font-extrabold mb-0"><%= stats.totalUsers %></h6>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="col-6 col-lg-3 col-md-6">
-        <div class="card">
-          <div class="card-body px-3 py-4-5">
-            <div class="row">
-              <div class="col-md-4">
-                <div class="stats-icon blue">
-                  <i class="iconly-boldUser"></i>
-                </div>
-              </div>
-              <div class="col-md-8">
-                <h6 class="text-muted font-semibold">User Aktif</h6>
-                <h6 class="font-extrabold mb-0"><%= stats.activeUsers %></h6>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<div class="page-content">
+  <section class="row">
+    <div class="col-12 col-lg-9">
+      
+      <!-- Stats Section - Load based on role -->
+      <% if (roleLevel === 1 || roleLevel === 2) { %>
+        <%- include('./partials/admin-stats') %>
+      <% } else if (roleLevel === 3) { %>
+        <%- include('./partials/sekretaris-stats') %>
+      <% } else if (roleLevel === 4) { %>
+        <%- include('./partials/bendahara-stats') %>
+      <% } else if (roleLevel === 5) { %>
+        <%- include('./partials/ketua-bidang-stats') %>
+      <% } else if (roleLevel === 6) { %>
+        <%- include('./partials/anggota-stats') %>
+      <% } %>
 
-      <div class="col-6 col-lg-3 col-md-6">
-        <div class="card">
-          <div class="card-body px-3 py-4-5">
-            <div class="row">
-              <div class="col-md-4">
-                <div class="stats-icon green">
-                  <i class="iconly-boldShield-Done"></i>
-                </div>
-              </div>
-              <div class="col-md-8">
-                <h6 class="text-muted font-semibold">Admin</h6>
-                <h6 class="font-extrabold mb-0"><%= stats.admins %></h6>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Recent Activities - Universal -->
+      <% if (typeof recentProker !== 'undefined') { %>
+        <%- include('./partials/recent-activities') %>
+      <% } %>
 
-      <div class="col-6 col-lg-3 col-md-6">
-        <div class="card">
-          <div class="card-body px-3 py-4-5">
-            <div class="row">
-              <div class="col-md-4">
-                <div class="stats-icon red">
-                  <i class="iconly-boldAdd-User"></i>
-                </div>
-              </div>
-              <div class="col-md-8">
-                <h6 class="text-muted font-semibold">Anggota</h6>
-                <h6 class="font-extrabold mb-0"><%= stats.members %></h6>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Anggota List - Conditional -->
+      <% if (typeof anggotaList !== 'undefined' && anggotaList && anggotaList.length > 0) { %>
+        <%- include('./partials/anggota-list') %>
+      <% } %>
+      
     </div>
 
-    <!-- Tambahkan konten lain di sini -->
-  </div>
-
-  <div class="col-12 col-lg-3">
-    <div class="card">
-      <div class="card-body py-4 px-5">
-        <div class="d-flex align-items-center">
-          <div class="avatar avatar-xl">
-            <img src="/dashboard-template/dist/assets/images/faces/1.jpg" alt="Face 1">
-          </div>
-          <div class="ms-3 name">
-            <h5 class="font-bold"><%= user.fullName %></h5>
-            <h6 class="text-muted mb-0">@<%= user.username %></h6>
-          </div>
-        </div>
-      </div>
+    <!-- Sidebar -->
+    <div class="col-12 col-lg-3">
+      <%- include('./partials/sidebar') %>
     </div>
-  </div>
-</section>
-
-<script> console.log('HALO');</script>
+  </section>
+</div>

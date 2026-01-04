@@ -49,14 +49,13 @@ app.use(setLocals); // Set locals untuk semua views
 app.use(logActivity); // Log activity (opsional)
 
 // Import routes
-
-
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const userRoutes = require('./routes/users');
 const bidangRoutes = require('./routes/bidang');
-const myBidangRoutes = require('./routes/my-bidang');
-const prokerRoutes = require('./routes/proker'); 
+const prokerRoutes = require('./routes/proker');
+const departemenRoutes = require('./routes/departemen');
+const profileRoutes = require('./routes/profile');
 
 // Use routes
 app.get('/', setLocals, (req, res) => {
@@ -65,13 +64,14 @@ app.get('/', setLocals, (req, res) => {
     layout: false
   });
 });
+
 app.use('/', authRoutes); // Login/logout
 app.use('/dashboard', dashboardRoutes);
 app.use('/users', userRoutes);
 app.use('/bidang', bidangRoutes);
-app.use('/my-bidang', myBidangRoutes);
 app.use('/proker', prokerRoutes);
-
+app.use('/departemen', departemenRoutes);
+app.use('/profile', profileRoutes);
 
 // Error handlers
 app.use(notFound); // 404 handler

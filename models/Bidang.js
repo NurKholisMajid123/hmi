@@ -87,8 +87,17 @@ class Bidang {
         return result.rows;
     }
 
-    // Add anggota ke bidang
+    // Add anggota ke bidang (WITH VALIDATION)
     static async addAnggota(bidangId, userId) {
+        // Import DepartemenAnggota untuk check membership
+        const DepartemenAnggota = require('./DepartemenAnggota');
+        
+        // Check existing membership - VALIDATION HERE
+        const membership = await DepartemenAnggota.checkUserMembership(userId);
+        if (membership) {
+            throw new Error(membership.message);
+        }
+
         const query = `
       INSERT INTO user_bidang (bidang_id, user_id)
       VALUES ($1, $2)
@@ -112,29 +121,7 @@ class Bidang {
         return result.rows.length > 0;
     }
 
-    // Get bidang-bidang yang diikuti user
-    static async getUserBidang(userId) {
-        const query = `
-    SELECT DISTINCT b.*, 
-           u.full_name as ketua_name,
-           CASE 
-             WHEN b.ketua_bidang_id = $1 THEN 'Ketua Bidang'
-             ELSE 'Anggota'
-           END as posisi
-    FROM bidang b
-    LEFT JOIN users u ON b.ketua_bidang_id = u.id
-    WHERE b.id IN (
-      -- Bidang dimana user adalah anggota
-      SELECT bidang_id FROM user_bidang WHERE user_id = $1
-      UNION
-      -- Bidang dimana user adalah ketua
-      SELECT id FROM bidang WHERE ketua_bidang_id = $1
-    )
-    ORDER BY b.nama_bidang ASC
-  `;
-        const result = await pool.query(query, [userId]);
-        return result.rows;
-    }
+
 }
 
 module.exports = Bidang;

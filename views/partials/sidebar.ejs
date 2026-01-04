@@ -10,7 +10,6 @@
         </div>
       </div>
     </div>
-
     <div class="sidebar-menu">
       <ul class="menu">
         <li class="sidebar-title">Menu</li>
@@ -43,6 +42,26 @@
         </li>
         <% } %>
 
+        <!-- Sekretaris: Manajemen Anggota Sekretaris -->
+        <% if (user && (user.roleLevel === 1 || user.roleLevel === 2 || user.roleLevel === 3)) { %>
+        <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'sekretaris' ? 'active' : '' %>">
+          <a href="/departemen/sekretaris/anggota" class='sidebar-link'>
+            <i class="bi bi-journal-text"></i>
+            <span>Anggota Sekretaris</span>
+          </a>
+        </li>
+        <% } %>
+
+        <!-- Bendahara: Manajemen Anggota Bendahara -->
+        <% if (user && (user.roleLevel === 1 || user.roleLevel === 2 || user.roleLevel === 4)) { %>
+        <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'bendahara' ? 'active' : '' %>">
+          <a href="/departemen/bendahara/anggota" class='sidebar-link'>
+            <i class="bi bi-cash-stack"></i>
+            <span>Anggota Bendahara</span>
+          </a>
+        </li>
+        <% } %>
+
         <!-- Program Kerja - Semua role bisa akses -->
         <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'proker' ? 'active' : '' %>">
           <a href="/proker" class='sidebar-link'>
@@ -50,16 +69,6 @@
             <span>Program Kerja</span>
           </a>
         </li>
-
-        <!-- Ketua Bidang dan Anggota: Bidang Saya -->
-        <% if (user && user.roleLevel >= 5) { %>
-        <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'bidang-saya' ? 'active' : '' %>">
-          <a href="/my-bidang" class='sidebar-link'>
-            <i class="bi bi-bookmark-fill"></i>
-            <span>Bidang Saya</span>
-          </a>
-        </li>
-        <% } %>
 
         <!-- Pengurus: Laporan -->
         <% if (user && user.roleLevel <= 3) { %>
@@ -79,14 +88,12 @@
         </li>
         <% } %>
 
-        <!-- Profil Saya -->
-        <li class="sidebar-item">
+        <li class="sidebar-item <%= typeof activeMenu !== 'undefined' && activeMenu === 'profile' ? 'active' : '' %>">
           <a href="/profile" class='sidebar-link'>
             <i class="bi bi-person-fill"></i>
             <span>Profil Saya</span>
           </a>
         </li>
-
         <!-- Logout -->
         <li class="sidebar-item">
           <a href="/logout" class='sidebar-link'>
@@ -96,7 +103,6 @@
         </li>
       </ul>
     </div>
-
     <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
   </div>
 </div>

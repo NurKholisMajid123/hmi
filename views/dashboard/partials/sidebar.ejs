@@ -1,0 +1,155 @@
+<!-- views/dashboard/partials/sidebar.ejs -->
+
+<!-- User Profile Card -->
+<div class="card">
+  <div class="card-body py-4 px-5">
+    <div class="d-flex align-items-center">
+      <div class="avatar avatar-xl">
+        <% if (currentUser.profile_photo) { %>
+          <img src="<%= currentUser.profile_photo %>" alt="<%= currentUser.full_name %>">
+        <% } else { %>
+          <div class="avatar-content bg-primary text-white">
+            <%= currentUser.full_name.charAt(0).toUpperCase() %>
+          </div>
+        <% } %>
+      </div>
+      <div class="ms-3 name">
+        <h5 class="font-bold"><%= currentUser.full_name %></h5>
+        <h6 class="text-muted mb-0">@<%= currentUser.username %></h6>
+      </div>
+    </div>
+    <div class="mt-3">
+      <span class="badge bg-primary"><%= currentUser.role_name %></span>
+    </div>
+  </div>
+</div>
+
+<!-- User Bidang Info -->
+<% if (typeof userBidang !== 'undefined' && userBidang) { %>
+  <div class="card mt-3">
+    <div class="card-header">
+      <h5 class="card-title">Bidang Saya</h5>
+    </div>
+    <div class="card-body">
+      <div class="d-flex align-items-center">
+        <div class="stats-icon purple me-3">
+          <i class="iconly-boldCategory"></i>
+        </div>
+        <div>
+          <h6 class="mb-0"><%= userBidang.nama_bidang %></h6>
+          <small class="text-muted">
+            <%= roleLevel === 5 ? 'Sebagai Ketua' : 'Sebagai Anggota' %>
+          </small>
+        </div>
+      </div>
+      <% if (userBidang.jumlah_anggota) { %>
+        <div class="mt-3">
+          <small class="text-muted">
+            <i class="bi bi-people"></i> <%= userBidang.jumlah_anggota %> Anggota
+          </small>
+        </div>
+      <% } %>
+    </div>
+  </div>
+<% } %>
+
+<!-- User Departemen Info -->
+<% if (typeof isDepartemenSekretaris !== 'undefined' && typeof isDepartemenBendahara !== 'undefined' && (isDepartemenSekretaris || isDepartemenBendahara)) { %>
+  <div class="card mt-3">
+    <div class="card-header">
+      <h5 class="card-title">Departemen</h5>
+    </div>
+    <div class="card-body">
+      <div class="d-flex align-items-center">
+        <div class="stats-icon <%= isDepartemenSekretaris ? 'blue' : 'green' %> me-3">
+          <i class="<%= isDepartemenSekretaris ? 'iconly-boldDocument' : 'iconly-boldWallet' %>"></i>
+        </div>
+        <div>
+          <h6 class="mb-0"><%= isDepartemenSekretaris ? 'Sekretaris' : 'Bendahara' %></h6>
+        </div>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<!-- My Proker (Anggota) -->
+<% if (roleLevel === 6 && typeof myProker !== 'undefined' && myProker && myProker.length > 0) { %>
+  <div class="card mt-3">
+    <div class="card-header">
+      <h5 class="card-title">Program Kerja Saya</h5>
+    </div>
+    <div class="card-body">
+      <div class="list-group list-group-flush">
+        <% myProker.slice(0, 5).forEach(proker => { %>
+          <a href="/proker/<%= proker.id %>" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1"><%= proker.judul %></h6>
+              <% 
+                let badge = 'secondary';
+                if (proker.status === 'disetujui') badge = 'success';
+                else if (proker.status === 'diajukan') badge = 'warning';
+                else if (proker.status === 'ditolak') badge = 'danger';
+              %>
+              <span class="badge bg-<%= badge %>"><%= proker.status %></span>
+            </div>
+            <small class="text-muted"><%= proker.nama_kategori || '-' %></small>
+          </a>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<!-- Pending Approval (Admin & Ketua Umum) -->
+<% if ((roleLevel === 1 || roleLevel === 2) && typeof pendingApproval !== 'undefined' && pendingApproval && pendingApproval.length > 0) { %>
+  <div class="card mt-3">
+    <div class="card-header">
+      <h5 class="card-title">Menunggu Persetujuan</h5>
+    </div>
+    <div class="card-body">
+      <div class="list-group list-group-flush">
+        <% pendingApproval.forEach(proker => { %>
+          <a href="/proker/<%= proker.id %>" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1"><%= proker.judul %></h6>
+              <span class="badge bg-warning">Diajukan</span>
+            </div>
+            <small class="text-muted"><%= proker.nama_kategori || '-' %></small>
+          </a>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<!-- Quick Links -->
+<div class="card mt-3">
+  <div class="card-header">
+    <h5 class="card-title">Quick Links</h5>
+  </div>
+  <div class="card-body">
+    <div class="list-group list-group-flush">
+      <a href="/proker" class="list-group-item list-group-item-action">
+        <i class="bi bi-file-earmark-text me-2"></i> Program Kerja
+      </a>
+      
+      <!-- Bidang: Admin, Ketua Umum, Ketua Bidang, dan Anggota (yang punya bidang) -->
+      <% if (roleLevel === 1 || roleLevel === 2 || roleLevel === 5 || (roleLevel === 6 && typeof userBidang !== 'undefined' && userBidang)) { %>
+        <a href="/bidang" class="list-group-item list-group-item-action">
+          <i class="bi bi-diagram-3 me-2"></i> Bidang
+        </a>
+      <% } %>
+      
+      <!-- Manajemen User: Admin & Ketua Umum -->
+      <% if (roleLevel <= 2) { %>
+        <a href="/users" class="list-group-item list-group-item-action">
+          <i class="bi bi-people me-2"></i> Manajemen User
+        </a>
+      <% } %>
+      
+      <a href="/profile" class="list-group-item list-group-item-action">
+        <i class="bi bi-person-circle me-2"></i> Profil Saya
+      </a>
+    </div>
+  </div>
+</div>

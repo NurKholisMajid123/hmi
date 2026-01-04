@@ -1,11 +1,12 @@
 const ProgramKerja = require('../models/ProgramKerja');
 const Bidang = require('../models/Bidang');
+const DepartemenAnggota = require('../models/DepartemenAnggota');
 
 // Check if user can create proker
 const canCreateProker = async (req, res, next) => {
     const roleLevel = req.session.roleLevel;
 
-    // Semua role bisa create proker
+    // Semua role bisa create proker (termasuk anggota sekretaris & bendahara)
     if (roleLevel >= 1 && roleLevel <= 6) {
         return next();
     }
@@ -59,11 +60,30 @@ const canReadProker = async (req, res, next) => {
             }
         }
 
-        // Anggota - hanya bidangnya
-        if (roleLevel === 6 && proker.bidang_id) {
-            const isAnggota = await Bidang.isAnggotaOf(userId, proker.bidang_id);
-            if (isAnggota) {
-                return next();
+        // Anggota - cek apakah anggota bidang, sekretaris, atau bendahara
+        if (roleLevel === 6) {
+            // Cek anggota bidang
+            if (proker.bidang_id) {
+                const isAnggotaBidang = await Bidang.isAnggotaOf(userId, proker.bidang_id);
+                if (isAnggotaBidang) {
+                    return next();
+                }
+            }
+
+            // Cek anggota sekretaris
+            if (proker.nama_kategori === 'Sekretaris') {
+                const isAnggotaSekretaris = await DepartemenAnggota.isAnggotaSekretaris(userId);
+                if (isAnggotaSekretaris) {
+                    return next();
+                }
+            }
+
+            // Cek anggota bendahara
+            if (proker.nama_kategori === 'Bendahara') {
+                const isAnggotaBendahara = await DepartemenAnggota.isAnggotaBendahara(userId);
+                if (isAnggotaBendahara) {
+                    return next();
+                }
             }
         }
 

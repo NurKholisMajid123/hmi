@@ -186,11 +186,11 @@ router.get('/:id/anggota', noCache, isKetuaOfBidang, async (req, res) => {
         const { id } = req.params;
         const bidang = await Bidang.findById(id);
         const anggota = await Bidang.getAnggota(id);
+        
+        const DepartemenAnggota = require('../models/DepartemenAnggota');
 
-        // Get available users (Anggota role) yang belum terdaftar di bidang ini
-        const allAnggota = await User.findByRole(6);
-        const anggotaIds = anggota.map(a => a.id);
-        const availableUsers = allAnggota.filter(u => !anggotaIds.includes(u.id));
+        // Get ONLY available users (yang belum terdaftar di manapun)
+        const availableUsers = await DepartemenAnggota.getAvailableUsers();
 
         if (!bidang) {
             return res.redirect('/bidang?error=Bidang tidak ditemukan');
@@ -222,10 +222,17 @@ router.post('/:id/anggota/add', isKetuaOfBidang, async (req, res) => {
             return res.redirect(`/bidang/${id}/anggota?error=Pilih anggota terlebih dahulu`);
         }
 
+        // Validasi akan dilakukan di model Bidang.addAnggota
         await Bidang.addAnggota(id, user_id);
         res.redirect(`/bidang/${id}/anggota?success=Anggota berhasil ditambahkan`);
     } catch (error) {
         console.error('Error adding anggota:', error);
+        
+        // Handle specific error message
+        if (error.message.includes('sudah menjadi anggota')) {
+            return res.redirect(`/bidang/${req.params.id}/anggota?error=${encodeURIComponent(error.message)}`);
+        }
+        
         res.redirect(`/bidang/${req.params.id}/anggota?error=Gagal menambahkan anggota`);
     }
 });

@@ -2,19 +2,32 @@ const pool = require('../config/database');
 const bcrypt = require('bcrypt');
 
 class User {
-  // Get all users dengan role
+  // Get all users dengan role dan informasi lengkap
   static async findAll() {
     const query = `
       SELECT u.id, u.username, u.email, u.full_name, u.phone, 
              u.address, u.is_active, u.profile_photo, u.created_at,
              r.role_name, r.role_level,
+             
+             -- Bidang sebagai Ketua
+             b.id as bidang_ketua_id,
              b.nama_bidang as bidang_ketua,
+             
+             -- Bidang sebagai Anggota (string untuk display)
              (
                SELECT string_agg(b2.nama_bidang, ', ')
                FROM user_bidang ub
                JOIN bidang b2 ON ub.bidang_id = b2.id
                WHERE ub.user_id = u.id
-             ) as bidang_anggota
+             ) as bidang_anggota,
+             
+             -- Status Departemen (Sekretaris/Bendahara)
+             CASE 
+               WHEN EXISTS (SELECT 1 FROM anggota_sekretaris WHERE user_id = u.id) THEN 'Anggota Sekretaris'
+               WHEN EXISTS (SELECT 1 FROM anggota_bendahara WHERE user_id = u.id) THEN 'Anggota Bendahara'
+               ELSE NULL
+             END as departemen
+             
       FROM users u
       JOIN roles r ON u.role_id = r.id
       LEFT JOIN bidang b ON b.ketua_bidang_id = u.id
@@ -37,7 +50,15 @@ class User {
              CASE 
                WHEN b.ketua_bidang_id = u.id THEN 0
                ELSE 1
-             END as sort_order
+             END as sort_order,
+             
+             -- Tambahkan info departemen untuk filter bidang juga
+             CASE 
+               WHEN EXISTS (SELECT 1 FROM anggota_sekretaris WHERE user_id = u.id) THEN 'Anggota Sekretaris'
+               WHEN EXISTS (SELECT 1 FROM anggota_bendahara WHERE user_id = u.id) THEN 'Anggota Bendahara'
+               ELSE NULL
+             END as departemen
+             
       FROM users u
       JOIN roles r ON u.role_id = r.id
       CROSS JOIN bidang b
@@ -55,15 +76,36 @@ class User {
     return result.rows;
   }
 
-  // Get user by ID
+  // Get user by ID dengan informasi lengkap
   static async findById(id) {
     const query = `
       SELECT u.id, u.username, u.email, u.full_name, u.phone, 
              u.address, u.is_active, u.profile_photo, u.role_id, 
              u.password, u.created_at, u.updated_at,
-             r.role_name, r.role_level
+             r.role_name, r.role_level,
+             
+             -- Info bidang sebagai ketua
+             b.id as bidang_ketua_id,
+             b.nama_bidang as bidang_ketua,
+             
+             -- Info bidang sebagai anggota
+             (
+               SELECT string_agg(b2.nama_bidang, ', ')
+               FROM user_bidang ub
+               JOIN bidang b2 ON ub.bidang_id = b2.id
+               WHERE ub.user_id = u.id
+             ) as bidang_anggota,
+             
+             -- Info departemen
+             CASE 
+               WHEN EXISTS (SELECT 1 FROM anggota_sekretaris WHERE user_id = u.id) THEN 'Anggota Sekretaris'
+               WHEN EXISTS (SELECT 1 FROM anggota_bendahara WHERE user_id = u.id) THEN 'Anggota Bendahara'
+               ELSE NULL
+             END as departemen
+             
       FROM users u
       JOIN roles r ON u.role_id = r.id
+      LEFT JOIN bidang b ON b.ketua_bidang_id = u.id
       WHERE u.id = $1
     `;
     const result = await pool.query(query, [id]);
@@ -76,7 +118,7 @@ class User {
       SELECT u.*, r.role_name, r.role_level
       FROM users u
       JOIN roles r ON u.role_id = r.id
-      WHERE u.username = $1
+      WHERE (u.username = $1 OR u.email = $1)
     `;
     const result = await pool.query(query, [username]);
     return result.rows[0];
@@ -98,19 +140,19 @@ class User {
   static async create(userData) {
     const { username, email, password, full_name, phone, address, role_id, is_active } = userData;
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     const query = `
       INSERT INTO users (username, email, password, full_name, phone, address, role_id, is_active)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id, username, email, full_name, role_id, is_active, created_at
     `;
     const values = [
-      username, 
-      email, 
-      hashedPassword, 
-      full_name, 
-      phone, 
-      address, 
+      username,
+      email,
+      hashedPassword,
+      full_name,
+      phone,
+      address,
       role_id,
       is_active !== undefined ? is_active : true
     ];
@@ -121,7 +163,7 @@ class User {
   // Update user
   static async update(id, userData) {
     const { username, email, full_name, phone, address, role_id, is_active } = userData;
-    
+
     const query = `
       UPDATE users 
       SET username = $1, email = $2, full_name = $3, phone = $4, 
@@ -152,19 +194,29 @@ class User {
     return await bcrypt.compare(plainPassword, hashedPassword);
   }
 
-  // Get users by role
+  // Get users by role dengan informasi lengkap
   static async findByRole(roleId) {
     const query = `
       SELECT u.id, u.username, u.email, u.full_name, u.phone, 
              u.address, u.is_active, u.profile_photo, u.created_at,
              r.role_name, r.role_level,
+             
+             -- Info bidang
              b.nama_bidang as bidang_ketua,
              (
                SELECT string_agg(b2.nama_bidang, ', ')
                FROM user_bidang ub
                JOIN bidang b2 ON ub.bidang_id = b2.id
                WHERE ub.user_id = u.id
-             ) as bidang_anggota
+             ) as bidang_anggota,
+             
+             -- Info departemen
+             CASE 
+               WHEN EXISTS (SELECT 1 FROM anggota_sekretaris WHERE user_id = u.id) THEN 'Anggota Sekretaris'
+               WHEN EXISTS (SELECT 1 FROM anggota_bendahara WHERE user_id = u.id) THEN 'Anggota Bendahara'
+               ELSE NULL
+             END as departemen
+             
       FROM users u
       JOIN roles r ON u.role_id = r.id
       LEFT JOIN bidang b ON b.ketua_bidang_id = u.id

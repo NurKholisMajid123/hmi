@@ -159,6 +159,7 @@
                     <span class="badge <%= badgeClass %>"><%= user.role_name %></span>
                   </td>
                   <td>
+
                     <% if (user.posisi_di_bidang) { %>
                     <!-- Untuk hasil filter bidang -->
                     <% if (user.posisi_di_bidang === 'Ketua Bidang') { %>
@@ -170,23 +171,41 @@
                       <i class="bi bi-person"></i> Anggota
                     </span>
                     <% } %>
-                    <% } else if (user.bidang_ketua) { %>
-                    <!-- User adalah ketua bidang -->
-                    <span class="badge bg-warning" title="Ketua <%= user.bidang_ketua %>">
-                      <i class="bi bi-star-fill"></i> <%= user.bidang_ketua %>
-                    </span>
-                    <% } else if (user.bidang_anggota) { %>
-                    <!-- User adalah anggota bidang -->
-                    <div class="d-flex flex-wrap gap-1">
-                      <% user.bidang_anggota.split(', ').forEach(bidang => { %>
-                      <span class="badge bg-primary" style="font-size: 0.7rem;">
-                        <%= bidang %>
-                      </span>
-                      <% }); %>
-                    </div>
+
                     <% } else { %>
-                    <span class="text-muted">-</span>
+                    <!-- Ketua Bidang -->
+                    <% if (user.bidang_ketua) { %>
+                    <span class="badge bg-warning" title="Ketua <%= user.bidang_ketua %>">
+                      <i class="bi bi-star-fill"></i> Ketua: <%= user.bidang_ketua %>
+                    </span>
                     <% } %>
+
+                    <!-- Anggota Bidang -->
+                    <% if (user.bidang_anggota) { %>
+                    <span class="badge bg-primary"> 
+                      <i class="bi bi-person"></i> <%= user.bidang_anggota %>
+                    </span>
+                    <% } %>
+
+                    <!-- Departemen (Sekretaris/Bendahara) -->
+                    <% if (user.departemen) { %>
+                    <% 
+                      let deptBadge = user.departemen.includes('Sekretaris') ? 'bg-info' : 'bg-warning text-dark';
+                      let deptIcon = user.departemen.includes('Sekretaris') ? 'bi-journal-text' : 'bi-cash-coin';
+                    %>
+                    <span class="badge <%= deptBadge %>" style="font-size: 0.7rem;">
+                      <i class="bi <%= deptIcon %>"></i> <%= user.departemen %>
+                    </span>
+                    <% } %>
+
+                    <!-- Jika tidak ada keanggotaan -->
+                    <% if (!user.bidang_ketua && !user.bidang_anggota && !user.departemen) { %>
+                    <span class="text-muted small">
+                      <i class="bi bi-dash-circle"></i> Belum terdaftar
+                    </span>
+                    <% } %>
+                    <% } %>
+
                   </td>
                   <td>
                     <% if (user.is_active) { %>

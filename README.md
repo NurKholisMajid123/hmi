@@ -136,3 +136,69 @@ CREATE TABLE proker_history (
 );
 
 CREATE INDEX idx_proker_history_proker ON proker_history(proker_id);
+
+
+-- Tabel untuk menyimpan anggota sekretaris
+CREATE TABLE IF NOT EXISTS anggota_sekretaris (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id)
+);
+
+-- Tabel untuk menyimpan anggota bendahara
+CREATE TABLE IF NOT EXISTS anggota_bendahara (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id)
+);
+
+-- Index untuk performa
+CREATE INDEX idx_anggota_sekretaris_user ON anggota_sekretaris(user_id);
+CREATE INDEX idx_anggota_bendahara_user ON anggota_bendahara(user_id);
+
+-- Tambah comment untuk dokumentasi
+COMMENT ON TABLE anggota_sekretaris IS 'Menyimpan anggota yang berada di bawah Sekretaris';
+COMMENT ON TABLE anggota_bendahara IS 'Menyimpan anggota yang berada di bawah Bendahara';
+
+-- Function untuk check double membership
+CREATE OR REPLACE FUNCTION check_double_membership()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if user already in sekretaris
+    IF EXISTS (SELECT 1 FROM anggota_sekretaris WHERE user_id = NEW.user_id) THEN
+        RAISE EXCEPTION 'User sudah menjadi anggota Sekretaris';
+    END IF;
+    
+    -- Check if user already in bendahara
+    IF EXISTS (SELECT 1 FROM anggota_bendahara WHERE user_id = NEW.user_id) THEN
+        RAISE EXCEPTION 'User sudah menjadi anggota Bendahara';
+    END IF;
+    
+    -- Check if user already in bidang
+    IF EXISTS (SELECT 1 FROM user_bidang WHERE user_id = NEW.user_id) THEN
+        RAISE EXCEPTION 'User sudah menjadi anggota Bidang';
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger untuk anggota_sekretaris
+CREATE TRIGGER prevent_double_membership_sekretaris
+    BEFORE INSERT ON anggota_sekretaris
+    FOR EACH ROW
+    EXECUTE FUNCTION check_double_membership();
+
+-- Trigger untuk anggota_bendahara
+CREATE TRIGGER prevent_double_membership_bendahara
+    BEFORE INSERT ON anggota_bendahara
+    FOR EACH ROW
+    EXECUTE FUNCTION check_double_membership();
+
+-- Trigger untuk user_bidang
+CREATE TRIGGER prevent_double_membership_bidang
+    BEFORE INSERT ON user_bidang
+    FOR EACH ROW
+    EXECUTE FUNCTION check_double_membership();

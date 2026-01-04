@@ -39,26 +39,32 @@ const renderForm = (res, type, data = {}) => {
 router.get('/', isAdmin, noCache, async (req, res) => {
   try {
     const { bidang_id, role_id } = req.query;
-    
+
     let users;
-    
-    // Filter berdasarkan bidang
+
+    // ===== FILTER USER =====
     if (bidang_id) {
       users = await User.findByBidang(bidang_id);
-    } 
-    // Filter berdasarkan role
-    else if (role_id) {
+    } else if (role_id) {
       users = await User.findByRole(role_id);
-    } 
-    // Tampilkan semua
-    else {
+    } else {
       users = await User.findAll();
     }
-    
-    // Get data untuk dropdown filter
+
+    // ===== AMBIL DATA TAMBAHAN =====
     const roles = await Role.findAll();
     const bidangList = await Bidang.findAll();
-    
+
+    const DepartemenAnggota = require('../models/DepartemenAnggota');
+
+    // ===== TAMBAHKAN STATUS KEANGGOTAAN =====
+    for (let user of users) {
+      const membership = await DepartemenAnggota.checkUserMembership(user.id);
+      user.membership_status = membership ? membership.status : 'none';
+      user.membership_detail = membership ? membership.message : 'Belum terdaftar';
+    }
+
+    // ===== RENDER =====
     res.render('users/index', {
       title: 'Daftar User',
       subtitle: 'Manajemen data pengguna sistem',
@@ -69,11 +75,13 @@ router.get('/', isAdmin, noCache, async (req, res) => {
       bidangList,
       query: req.query
     });
+
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).send('Terjadi kesalahan');
   }
 });
+
 
 // Show create form
 router.get('/create', isAdmin, noCache, async (req, res) => {

@@ -1,0 +1,287 @@
+<!-- views/departemen/bendahara-anggota.ejs -->
+
+<!-- Alert Messages -->
+<% if (typeof query !== 'undefined' && query.success) { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <i class="bi bi-check-circle"></i> <%= query.success %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<% if (typeof query !== 'undefined' && query.error) { %>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <i class="bi bi-exclamation-triangle"></i> <%= query.error %>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+
+<section class="section">
+  <div class="row">
+    <div class="col-12">
+      <!-- Info Card -->
+      <div class="card bg-gradient-warning text-white mb-4">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="stats-icon orange me-3">
+              <i class="bi bi-cash-stack" style="font-size: 3rem;"></i>
+            </div>
+            <div>
+              <h3 class="text-white mb-1">Anggota Bendahara</h3>
+              <p class="text-white-50 mb-0">Kelola anggota yang berada di bawah departemen Bendahara</p>
+              <div class="mt-2">
+                <span class="badge bg-white text-warning">
+                  <i class="bi bi-people"></i> Total: <%= anggota.length %> Anggota
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="card-title mb-0">
+              <i class="bi bi-list-ul"></i> Daftar Anggota Bendahara
+            </h4>
+            <button type="button" class="btn btn-warning text-white" data-bs-toggle="modal" data-bs-target="#addAnggotaModal">
+              <i class="bi bi-plus-circle"></i> Tambah Anggota
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- Search -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="searchInput" placeholder="Cari nama, username, email...">
+              </div>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="anggotaTable">
+              <thead>
+                <tr>
+                  <th>NO</th>
+                  <th>NAMA LENGKAP</th>
+                  <th>USERNAME</th>
+                  <th>EMAIL</th>
+                  <th>NO. TELEPON</th>
+                  <th>STATUS</th>
+                  <th>BERGABUNG</th>
+                  <th>AKSI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (anggota && anggota.length > 0) { %>
+                <% anggota.forEach((member, index) => { %>
+                <tr>
+                  <td class="text-bold-500"><%= index + 1 %></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar avatar-md me-2">
+                        <% if (member.profile_photo) { %>
+                        <img src="<%= member.profile_photo %>" alt="Avatar">
+                        <% } else { %>
+                        <img src="/dashboard-template/dist/assets/images/faces/default.jpg" alt="Avatar">
+                        <% } %>
+                      </div>
+                      <div>
+                        <strong><%= member.full_name %></strong>
+                        <br><small class="text-muted"><%= member.role_name %></small>
+                      </div>
+                    </div>
+                  </td>
+                  <td><%= member.username %></td>
+                  <td><%= member.email %></td>
+                  <td><%= member.phone || '-' %></td>
+                  <td>
+                    <% if (member.is_active) { %>
+                    <span class="badge bg-success">Aktif</span>
+                    <% } else { %>
+                    <span class="badge bg-danger">Nonaktif</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <small>
+                      <%= new Date(member.tanggal_bergabung).toLocaleDateString('id-ID', { 
+                        day: '2-digit', 
+                        month: 'short', 
+                        year: 'numeric' 
+                      }) %>
+                    </small>
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmRemove(<%= member.id %>, '<%= member.full_name %>')">
+                      <i class="bi bi-trash"></i> Hapus
+                    </button>
+                  </td>
+                </tr>
+                <% }); %>
+                <% } else { %>
+                <tr>
+                  <td colspan="8" class="text-center text-muted py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-2">Belum ada anggota bendahara</p>
+                    <button type="button" class="btn btn-sm btn-warning text-white mt-2" data-bs-toggle="modal" data-bs-target="#addAnggotaModal">
+                      <i class="bi bi-plus-circle"></i> Tambah Anggota Pertama
+                    </button>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Add Anggota Modal -->
+<div class="modal fade" id="addAnggotaModal" tabindex="-1" aria-labelledby="addAnggotaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-white">
+        <h5 class="modal-title" id="addAnggotaModalLabel">
+          <i class="bi bi-person-plus"></i> Tambah Anggota Bendahara
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/departemen/bendahara/anggota/add" method="POST">
+        <div class="modal-body">
+          <% if (availableUsers && availableUsers.length > 0) { %>
+          <div class="form-group">
+            <label for="user_id" class="form-label">Pilih Anggota <span class="text-danger">*</span></label>
+            <select class="form-select" id="user_id" name="user_id" required>
+              <option value="">-- Pilih Anggota --</option>
+              <% availableUsers.forEach(user => { %>
+              <option value="<%= user.id %>">
+                <%= user.full_name %> (<%= user.username %>) - <%= user.email %>
+              </option>
+              <% }); %>
+            </select>
+            <small class="text-muted">
+              <i class="bi bi-info-circle"></i> Hanya user dengan role "Anggota" yang bisa ditambahkan
+            </small>
+          </div>
+          <% } else { %>
+          <div class="alert alert-warning mb-0">
+            <i class="bi bi-exclamation-triangle"></i>
+            Tidak ada user dengan role Anggota yang tersedia untuk ditambahkan
+          </div>
+          <% } %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle"></i> Batal
+          </button>
+          <% if (availableUsers && availableUsers.length > 0) { %>
+          <button type="submit" class="btn btn-warning text-white">
+            <i class="bi bi-check-circle"></i> Tambah
+          </button>
+          <% } %>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Remove Confirmation Modal -->
+<div class="modal fade" id="removeModal" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="removeModalLabel">
+          <i class="bi bi-exclamation-triangle"></i> Konfirmasi Hapus
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah Anda yakin ingin menghapus <strong id="removeAnggotaName" class="text-danger"></strong> dari anggota bendahara?</p>
+        <div class="alert alert-light-warning">
+          <i class="bi bi-info-circle"></i> Anggota yang dihapus tidak akan bisa mengakses proker kategori Bendahara
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle"></i> Batal
+        </button>
+        <form id="removeForm" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Hapus
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Search functionality
+  const searchInput = document.getElementById('searchInput');
+  const anggotaTable = document.getElementById('anggotaTable');
+
+  if (searchInput) {
+    searchInput.addEventListener('keyup', function() {
+      const searchValue = this.value.toLowerCase();
+      const rows = anggotaTable.querySelectorAll('tbody tr');
+
+      rows.forEach(row => {
+        if (row.children.length === 1 && row.children[0].colSpan > 1) {
+          return;
+        }
+
+        const text = row.textContent.toLowerCase();
+        const isVisible = text.includes(searchValue);
+        row.style.display = isVisible ? '' : 'none';
+      });
+    });
+  }
+
+  // Confirm remove
+  function confirmRemove(userId, userName) {
+    document.getElementById('removeAnggotaName').textContent = userName;
+    document.getElementById('removeForm').action = '/departemen/bendahara/anggota/remove/' + userId;
+    const removeModal = new bootstrap.Modal(document.getElementById('removeModal'));
+    removeModal.show();
+  }
+
+  // Auto dismiss alerts
+  setTimeout(function() {
+    const alerts = document.querySelectorAll('.alert-dismissible');
+    alerts.forEach(alert => {
+      const bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    });
+  }, 5000);
+</script>
+
+<style>
+  .bg-gradient-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  }
+
+  .stats-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-md {
+    width: 40px;
+    height: 40px;
+  }
+
+  .table td {
+    vertical-align: middle;
+  }
+</style>

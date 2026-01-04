@@ -82,7 +82,7 @@
                   <td>
                     <div class="btn-group" role="group">
                       <!-- Tombol Kelola Anggota - Admin, Ketua Umum, atau Ketua Bidang yang bersangkutan -->
-                      <% if (user.roleLevel === 1 || user.roleLevel === 2 || (user.roleLevel === 4 && bidang.ketua_bidang_id === user.userId)) { %>
+                      <% if (user.roleLevel === 1 || user.roleLevel === 2 || (user.roleLevel === 5 && bidang.ketua_bidang_id === user.userId)) { %>
                       <a href="/bidang/<%= bidang.id %>/anggota" class="btn btn-sm btn-info" title="Kelola Anggota">
                         <i class="bi bi-people"></i>
                       </a>

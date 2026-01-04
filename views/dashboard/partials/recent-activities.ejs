@@ -1,0 +1,57 @@
+<div class="row mt-3">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h4><%= roleLevel === 6 ? 'Program Kerja Terbaru' : 'Aktivitas Terbaru' %></h4>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Program Kerja</th>
+                <th>Kategori</th>
+                <th>Status</th>
+                <th>Tanggal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (recentProker && recentProker.length > 0) { %>
+                <% recentProker.forEach(proker => { %>
+                  <tr>
+                    <td>
+                      <a href="/proker/<%= proker.id %>" class="text-decoration-none">
+                        <%= proker.judul %>
+                      </a>
+                    </td>
+                    <td>
+                      <span class="badge bg-info"><%= proker.nama_kategori || '-' %></span>
+                    </td>
+                    <td>
+                      <% 
+                        let badge = 'secondary';
+                        if (proker.status === 'disetujui') badge = 'success';
+                        else if (proker.status === 'diajukan') badge = 'warning';
+                        else if (proker.status === 'ditolak') badge = 'danger';
+                        else if (proker.status === 'berjalan') badge = 'primary';
+                        else if (proker.status === 'selesai') badge = 'info';
+                      %>
+                      <span class="badge bg-<%= badge %>"><%= proker.status %></span>
+                    </td>
+                    <td>
+                      <%= new Date(proker.created_at).toLocaleDateString('id-ID') %>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="4" class="text-center text-muted">Belum ada aktivitas</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
